@@ -20,9 +20,9 @@ What's inside
 Credits and acknowledgments
 ============================
 
- - Credit for [SFMLDebugDraw](www.github.com/MrPlow442/Box2D-SFML2-Debug-Draw) implementation goes to [MrPlow442](www.github.com/MrPlow442)
+ - Credit for [SFMLDebugDraw](http://www.github.com/MrPlow442/Box2D-SFML2-Debug-Draw) implementation goes to [MrPlow442](http://www.github.com/MrPlow442)
  - Iforce2d for excellent Box2D tutorials
- - FOSS Cosmmunity
+ - FOSS Community for being so Awesome!
 
 
 Screenshots
