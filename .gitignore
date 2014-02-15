@@ -44,4 +44,7 @@ Debug
 HelloSFML/Debug
 *.opensdf
 *.user
-*.filters
+
+#Filters help create that 'folder like' look in solution explorer
+#though I hate this feature, but meh!
+#*.filters
