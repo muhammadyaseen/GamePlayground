@@ -45,6 +45,7 @@ HelloSFML/Debug
 *.opensdf
 *.user
 HelloSFML.sln
+HelloSFML/HelloSFML.vcxproj
 
 #Filters help create that 'folder like' look in solution explorer
 #though I hate this feature, but meh!
