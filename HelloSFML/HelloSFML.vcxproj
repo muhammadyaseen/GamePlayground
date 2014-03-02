@@ -80,25 +80,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedSprite.cpp" />
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="BombParticle.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Health.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="reference.cpp" />
     <ClCompile Include="SFMLDebugDraw.cpp" />
+    <ClCompile Include="SpriteSheetReference.cpp" />
     <ClCompile Include="StaticPlatform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedSprite.hpp" />
+    <ClInclude Include="Animation.hpp" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="BombParticle.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="Health.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="OrderedPair.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="SFMLDebugDraw.h" />
     <ClInclude Include="StaticPlatform.h" />
   </ItemGroup>

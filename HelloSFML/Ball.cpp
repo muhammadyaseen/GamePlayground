@@ -2,7 +2,6 @@
 #include <iostream>
 #include "Ball.h"
 
-
 using namespace std;
 
 void Ball::SetWorld(b2World & world)
@@ -61,7 +60,7 @@ void Ball::Update(sf::Event e, sf::Time dt)
 		);
 
 	//cout << "( " << MathHelper::ToPixel( _pBody->GetPosition().x ) << " , " <<
-	//		MathHelper::ToPixel( _pBody->GetPosition().y ) << " )";
+	//MathHelper::ToPixel( _pBody->GetPosition().y ) << " )";
 }
 
 void Ball::Draw( sf::RenderWindow& window, sf::Time dt )

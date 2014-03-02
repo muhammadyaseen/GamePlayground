@@ -45,7 +45,7 @@ bool Game::Run()
 
 void Game::Initialize() 
 {
-	_pWorld = new b2World( b2Vec2(0, 1.f) );
+	_pWorld = new b2World( b2Vec2(0, 10.f) );
 	_pWorld->SetAllowSleeping( true );
 	_pWorld->SetDebugDraw( &_rSfmlDebugDraw );
 
@@ -85,7 +85,7 @@ void Game::LoadContent()
 	bombParticle.loadFromFile("Art\\BombParticle.png");
 	textureBank.insert( pair<string, Texture>("bombParticle", bombParticle) );
 
-	Bomb explosive( textureBank["bomb"], 400, 550, 1000 );
+	Bomb explosive( textureBank["bomb"], 400, 550, 200 );
 	explosive.SetWorld( *_pWorld );
 	bombs.push_back( explosive );
 
@@ -123,7 +123,10 @@ void Game::LoadContent()
 	crate.SetWorld( *_pWorld );
 	boxes.push_back( crate );
 
-
+	//load characters
+	Edward.LoadContent();
+	Edward.SetWorld(*_pWorld);
+	
 }
 
 void Game::UnloadContent() 
@@ -136,6 +139,8 @@ void Game::Update(Event gameEvent, Time timeSinceLastUpdateCall )
 
 	_pWorld->Step( timeStep, 8, 8);
 
+	Time frameTime = frameClock.restart();
+
 	for ( int i = 0; i < balls.size(); ++i)
 		balls[i].Update(gameEvent, timeSinceLastUpdateCall );
 
@@ -147,6 +152,8 @@ void Game::Update(Event gameEvent, Time timeSinceLastUpdateCall )
 
 	for ( int i = 0; i < bombs.size(); ++i)
 		bombs[i].Update( gameEvent, timeSinceLastUpdateCall );
+	
+	Edward.Update(gameEvent, timeSinceLastUpdateCall, frameTime);
 }
 
 void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall ) 
@@ -166,9 +173,10 @@ void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall )
 
 	for ( int i = 0; i < bombs.size(); ++i)
 		bombs[i].Draw( _rWindow, timeSinceLastDrawCall );
-
+	
+	Edward.Draw(_rWindow, timeSinceLastDrawCall);
 		
-	//_pWorld->DrawDebugData();
+	_pWorld->DrawDebugData();
 
 	_rWindow.display();
 
@@ -211,6 +219,11 @@ void Game::HandleInput(Event gameEvent)
 			for ( int i = 0; i < bombs.size(); ++i)
 				bombs[i].Explode( textureBank["bombParticle"], *_pWorld );
 		
+		}
+
+		if (gameEvent.key.code == Keyboard::Escape)
+		{
+			_rWindow.close();
 		}
 
 		//TODO: implement a BOMB with skull ball

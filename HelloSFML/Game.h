@@ -12,6 +12,7 @@
 #include "Bomb.h"
 #include "StaticPlatform.h"
 #include "SFMLDebugDraw.h"
+#include "Player.h"
 
 using namespace std;
 using namespace sf;
@@ -44,12 +45,16 @@ public:
 	SFMLDebugDraw& _rSfmlDebugDraw;
 
 	map<std::string, sf::Texture> textureBank;
+	//map<std::string, CharSprite> edwardSprites;
+	map<std::string, Texture> edwardSprites;
 
 	vector<Ball> balls;
 	vector<Box> boxes;
 	vector<StaticPlatform> platforms;
 	vector<Bomb> bombs;
-
+	
+	Player Edward;
+	Clock frameClock;
 
 	//End demo 'GameActor' Declarations
 

@@ -76,5 +76,3 @@ void StaticPlatform::Draw( sf::RenderWindow& window, sf::Time dt )
 {
 	window.draw( _sprite );
 }
-
-

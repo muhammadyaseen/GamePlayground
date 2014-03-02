@@ -8,7 +8,7 @@ using namespace sf;
 int main()
 {
 	
-	RenderWindow gameWindow(VideoMode(800,800), "SFML + Box2D");
+	RenderWindow gameWindow(VideoMode(800,640), "SFML + Box2D");
 
 	SFMLDebugDraw debugDrawInstance(gameWindow);
 
