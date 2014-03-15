@@ -45,7 +45,7 @@ bool Game::Run()
 
 void Game::Initialize() 
 {
-	_pWorld = new b2World( b2Vec2(0, 1.f) );
+	_pWorld = new b2World( b2Vec2(0, 10.f) );
 	_pWorld->SetAllowSleeping( true );
 	_pWorld->SetDebugDraw( &_rSfmlDebugDraw );
 
@@ -91,19 +91,19 @@ void Game::LoadContent()
 
 	//load ground
 
-	StaticPlatform road( textureBank["floor"], 400, 550);
+	StaticPlatform road( textureBank["floor"], 400, 750);
 	road.SetWorld( *_pWorld );
 	platforms.push_back( road );
 
 	//create left and right walls
 
 	//left wall
-	StaticPlatform leftWall( textureBank["boundaryWall"], 0, 100);
+	StaticPlatform leftWall( textureBank["boundaryWall"], 0, 300);
 	leftWall.SetWorld( *_pWorld );
 	platforms.push_back( leftWall );
 
 	//right wall
-	StaticPlatform rightWall( textureBank["boundaryWall"], 780, 100);
+	StaticPlatform rightWall( textureBank["boundaryWall"], 780, 300);
 	rightWall.SetWorld( *_pWorld );
 	platforms.push_back( rightWall );
 
