@@ -95,12 +95,23 @@ void Game::LoadContent()
 	screw.loadFromFile("Art\\Screw.png");
 	textureBank.insert( pair<string, Texture>("screw", screw) );
 
+	Texture wheelTexture;
+	wheelTexture.loadFromFile("Art\\Wheel.png");
+	textureBank.insert( pair<string, Texture>("wheel", wheelTexture) );
+
+	for (int i = 0; i <= 3; i++) //5 wheels 
+	{
+		Wheel wheel( textureBank["wheel"], 250 + i*85, 600 );
+		wheel.SetWorld( *_pWorld );
+		wheels.push_back( wheel );
+	}
+
 	JointPlatform jointPlatform( textureBank["jointWood"], textureBank["screw"], 300,350,0 );
 	jointPlatform.SetWorld( *_pWorld );
-
 	jointPlatforms.push_back( jointPlatform );
 	
-	Bomb explosive( textureBank["bomb"], 400, 550, 1000 );
+	//load bomb! (not the one that KILLs people)
+	Bomb explosive( textureBank["bomb"], 200, 550, 1000 );
 	explosive.SetWorld( *_pWorld );
 	bombs.push_back( explosive );
 
@@ -129,12 +140,12 @@ void Game::LoadContent()
 
 
 	//load balls
-	Ball skullBall( textureBank["ball"], 650, 0);
+	Ball skullBall( textureBank["ball"], 250, 0);
 	skullBall.SetWorld( *_pWorld );
 	balls.push_back( skullBall );
 
 	//load boxes
-	Box crate( textureBank["box"], 300, 0);
+	Box crate( textureBank["box"], 100, 0);
 	crate.SetWorld( *_pWorld );
 	boxes.push_back( crate );
 
@@ -165,6 +176,9 @@ void Game::Update(Event gameEvent, Time timeSinceLastUpdateCall )
 
 	for ( int i = 0; i < jointPlatforms.size(); ++i)
 		jointPlatforms[i].Update( gameEvent, timeSinceLastUpdateCall );
+
+	for ( int i = 0; i < wheels.size(); ++i)
+		wheels[i].Update( gameEvent, timeSinceLastUpdateCall );
 }
 
 void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall ) 
@@ -187,6 +201,9 @@ void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall )
 
 	for ( int i = 0; i < jointPlatforms.size(); ++i)
 		jointPlatforms[i].Draw( _rWindow, timeSinceLastDrawCall );
+
+	for ( int i = 0; i < wheels.size(); ++i)
+		wheels[i].Draw( _rWindow, timeSinceLastDrawCall );
 	
 	_pWorld->DrawDebugData();
 

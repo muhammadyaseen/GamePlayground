@@ -91,6 +91,7 @@
     <ClCompile Include="reference.cpp" />
     <ClCompile Include="SFMLDebugDraw.cpp" />
     <ClCompile Include="StaticPlatform.cpp" />
+    <ClCompile Include="Wheel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="OrderedPair.h" />
     <ClInclude Include="SFMLDebugDraw.h" />
     <ClInclude Include="StaticPlatform.h" />
+    <ClInclude Include="Wheel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

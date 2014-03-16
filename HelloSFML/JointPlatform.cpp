@@ -11,12 +11,9 @@ void JointPlatform::SetWorld(b2World & world)
 {
 	
 	_pBody = world.CreateBody(&_bodyDef);
-
-	//problem!
 	_pBody->CreateFixture(&_fixtureDef);
 
 	_pJointBody = world.CreateBody(&_jointBodyDef);
-	
 	_pJointBody->CreateFixture( &_jointFixtureDef);
 
 	_jointDef.bodyA = _pBody;
@@ -51,7 +48,7 @@ JointPlatform::JointPlatform(sf::Texture& texture, sf::Texture& jointTexture, fl
 	cout << "(" << _bodyDef.position.x << "," << _bodyDef.position.y << ")" << endl;
 	
 	_fixtureDef.shape = &_bodyShape;
-	_fixtureDef.density = 1.f;
+	_fixtureDef.density = 10.f;
 	_fixtureDef.friction = 0.5f;
 	_fixtureDef.restitution = 0.5f;
 
@@ -72,8 +69,8 @@ JointPlatform::JointPlatform(sf::Texture& texture, sf::Texture& jointTexture, fl
 
 	//set up joint
 	_jointDef.enableMotor = true;
-	_jointDef.maxMotorTorque = 5;
-	_jointDef.motorSpeed = MathHelper::DegreeToRadian( 90 );
+	_jointDef.maxMotorTorque = 15;
+	_jointDef.motorSpeed = MathHelper::DegreeToRadian( 360 );
 	_jointDef.collideConnected = false;
 }
 

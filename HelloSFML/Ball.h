@@ -5,7 +5,7 @@
 
 class Ball
 {
-private:
+protected:
 
    b2Body* _pBody;
    b2BodyDef _bodyDef;

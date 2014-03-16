@@ -10,6 +10,7 @@
 #include "Ball.h"
 #include "Box.h"
 #include "Bomb.h"
+#include "Wheel.h"
 #include "StaticPlatform.h"
 #include "JointPlatform.h"
 #include "SFMLDebugDraw.h"
@@ -50,6 +51,7 @@ public:
 	vector<Bomb> bombs;
 
 	vector<JointPlatform> jointPlatforms;
+	vector<Wheel> wheels;
 
 protected:
 
