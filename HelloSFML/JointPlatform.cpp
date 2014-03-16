@@ -9,14 +9,20 @@ JointPlatform::JointPlatform()
 
 void JointPlatform::SetWorld(b2World & world)
 {
+	
 	_pBody = world.CreateBody(&_bodyDef);
 
+	//problem!
 	_pBody->CreateFixture(&_fixtureDef);
 
+	_pJointBody = world.CreateBody(&_jointBodyDef);
+	
+	_pJointBody->CreateFixture( &_jointFixtureDef);
 
-
-
-
+	_jointDef.bodyA = _pBody;
+	_jointDef.bodyB = _pJointBody; 
+	_jointDef.localAnchorA = _pBody->GetLocalCenter() ;
+	_jointDef.localAnchorB = _pJointBody->GetLocalCenter();
 
 	_pJoint = (b2RevoluteJoint *)world.CreateJoint(&_jointDef);
 }
@@ -28,7 +34,7 @@ JointPlatform::JointPlatform(float w, float h)
 
 }
 
-JointPlatform::JointPlatform(sf::Texture& texture, float initX, float initY, float rotation)
+JointPlatform::JointPlatform(sf::Texture& texture, sf::Texture& jointTexture, float initX, float initY, float rotation)
 {
 	_sprite.setTexture( texture );	
 	_sprite.setOrigin( texture.getSize().x / 2.f, texture.getSize().y / 2.f);
@@ -49,18 +55,26 @@ JointPlatform::JointPlatform(sf::Texture& texture, float initX, float initY, flo
 	_fixtureDef.friction = 0.5f;
 	_fixtureDef.restitution = 0.5f;
 
+	//texture for the acnhor or joint
+	_jointBodySprite.setTexture( jointTexture );	
+	_jointBodySprite.setOrigin( jointTexture.getSize().x / 2.f, jointTexture.getSize().y / 2.f);
+	_jointBodySprite.setRotation( 0.0f );
+
 	//setup joint body
 
 	_jointBodyDef.type = b2_staticBody;
-	_jointBodyDef.position.Set(MathHelper::ToUnit( initX ), MathHelper::ToUnit( initY ) );
+	_jointBodyDef.position.Set( MathHelper::ToUnit( initX ), MathHelper::ToUnit( initY ) );
 
+	_jointBodyShape.m_radius = MathHelper::ToUnit( jointTexture.getSize().x / 2.f );
+	
+	_jointFixtureDef.density = 1.f;
+	_jointFixtureDef.shape = &_jointBodyShape;
 
 	//set up joint
-
+	_jointDef.enableMotor = true;
+	_jointDef.maxMotorTorque = 5;
+	_jointDef.motorSpeed = MathHelper::DegreeToRadian( 90 );
 	_jointDef.collideConnected = false;
-	_jointDef.bodyA = _pBody;
-	_jointDef.bodyB = _pJointBody; 
-
 }
 
 
@@ -83,11 +97,19 @@ void JointPlatform::Update(sf::Event e, sf::Time dt)
 			MathHelper::ToPixel( _pBody->GetPosition().x ) ,
 			MathHelper::ToPixel( _pBody->GetPosition().y ) 
 		);
+
+	_jointBodySprite.setRotation( MathHelper::RadianToDegree( _pJointBody->GetAngle() ) );
+
+	_jointBodySprite.setPosition(
+			MathHelper::ToPixel( _pJointBody->GetPosition().x ) ,
+			MathHelper::ToPixel( _pJointBody->GetPosition().y ) 
+		);
 }
 
 void JointPlatform::Draw( sf::RenderWindow& window, sf::Time dt )
 {
 	window.draw( _sprite );
+	window.draw( _jointBodySprite );
 }
 
 

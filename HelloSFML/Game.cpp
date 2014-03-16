@@ -85,6 +85,21 @@ void Game::LoadContent()
 	bombParticle.loadFromFile("Art\\BombParticle.png");
 	textureBank.insert( pair<string, Texture>("bombParticle", bombParticle) );
 
+	//set up joined platform
+	
+	Texture jointPlatformTexture;
+	jointPlatformTexture.loadFromFile("Art\\Wood.png");
+	textureBank.insert( pair<string, Texture>("jointWood", jointPlatformTexture) );
+
+	Texture screw;
+	screw.loadFromFile("Art\\Screw.png");
+	textureBank.insert( pair<string, Texture>("screw", screw) );
+
+	JointPlatform jointPlatform( textureBank["jointWood"], textureBank["screw"], 300,350,0 );
+	jointPlatform.SetWorld( *_pWorld );
+
+	jointPlatforms.push_back( jointPlatform );
+	
 	Bomb explosive( textureBank["bomb"], 400, 550, 1000 );
 	explosive.SetWorld( *_pWorld );
 	bombs.push_back( explosive );
@@ -108,7 +123,7 @@ void Game::LoadContent()
 	platforms.push_back( rightWall );
 
 	//load spike platform
-	StaticPlatform spike( textureBank["spikes"], 350, 200, 45);
+	StaticPlatform spike( textureBank["spikes"], 150, 150, 45);
 	spike.SetWorld( *_pWorld );
 	platforms.push_back( spike );
 
@@ -147,6 +162,9 @@ void Game::Update(Event gameEvent, Time timeSinceLastUpdateCall )
 
 	for ( int i = 0; i < bombs.size(); ++i)
 		bombs[i].Update( gameEvent, timeSinceLastUpdateCall );
+
+	for ( int i = 0; i < jointPlatforms.size(); ++i)
+		jointPlatforms[i].Update( gameEvent, timeSinceLastUpdateCall );
 }
 
 void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall ) 
@@ -167,8 +185,10 @@ void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall )
 	for ( int i = 0; i < bombs.size(); ++i)
 		bombs[i].Draw( _rWindow, timeSinceLastDrawCall );
 
-		
-	//_pWorld->DrawDebugData();
+	for ( int i = 0; i < jointPlatforms.size(); ++i)
+		jointPlatforms[i].Draw( _rWindow, timeSinceLastDrawCall );
+	
+	_pWorld->DrawDebugData();
 
 	_rWindow.display();
 

@@ -11,6 +11,7 @@
 #include "Box.h"
 #include "Bomb.h"
 #include "StaticPlatform.h"
+#include "JointPlatform.h"
 #include "SFMLDebugDraw.h"
 
 using namespace std;
@@ -34,8 +35,6 @@ public:
 
 	*/
 
-	//Start demo 'GameActor' Declarations
-
 	const float timeStep;
 
 	b2World		*_pWorld;
@@ -50,8 +49,7 @@ public:
 	vector<StaticPlatform> platforms;
 	vector<Bomb> bombs;
 
-
-	//End demo 'GameActor' Declarations
+	vector<JointPlatform> jointPlatforms;
 
 protected:
 

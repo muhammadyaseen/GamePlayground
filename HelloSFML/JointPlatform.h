@@ -12,7 +12,7 @@ private:
    b2PolygonShape	_bodyShape;
    b2FixtureDef		_fixtureDef;
 
-   b2JointDef		_jointDef;
+   b2RevoluteJointDef		_jointDef;
    b2BodyDef		_jointBodyDef;
    b2Body*			_pJointBody;
    b2CircleShape	_jointBodyShape;
@@ -26,7 +26,7 @@ public:
 
    JointPlatform(float width, float height);
    
-   JointPlatform(sf::Texture& texture, float initX, float initY, float rotation = 0);
+   JointPlatform(sf::Texture& texture, sf::Texture& jointTexture, float initX, float initY, float rotation = 0);
 
    JointPlatform();
    

@@ -59,9 +59,6 @@ void Ball::Update(sf::Event e, sf::Time dt)
 			MathHelper::ToPixel( _pBody->GetPosition().x ) ,
 			MathHelper::ToPixel( _pBody->GetPosition().y ) 
 		);
-
-	//cout << "( " << MathHelper::ToPixel( _pBody->GetPosition().x ) << " , " <<
-	//		MathHelper::ToPixel( _pBody->GetPosition().y ) << " )";
 }
 
 void Ball::Draw( sf::RenderWindow& window, sf::Time dt )

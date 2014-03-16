@@ -85,6 +85,7 @@
     <ClCompile Include="BombParticle.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="JointPlatform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="reference.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="BombParticle.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="JointPlatform.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="OrderedPair.h" />
