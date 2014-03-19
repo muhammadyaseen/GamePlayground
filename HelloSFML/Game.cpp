@@ -10,15 +10,12 @@ Game::Game(RenderWindow& window, SFMLDebugDraw& debugDraw)
 bool Game::Run() 
 {
 	Initialize();
-	
 	LoadContent();
-
 	Clock timeElapsed;
+	_rWindow.setKeyRepeatEnabled(true);
 	
 	while ( _rWindow.isOpen() )
 	{
-		Event e;
-
 		_rWindow.pollEvent(e);
 
 		if ( e.type == Event::Closed )
@@ -32,12 +29,14 @@ bool Game::Run()
 
 		if ( timeElapsed.getElapsedTime().asMilliseconds() >= 16 )
 		{
-			Update( e, timeElapsed.restart() );
+			Update( e, oldEvent ,timeElapsed.restart() );
 		}
 	
 		Time lastDrawCall = /*lastUpdateCall +*/ timeElapsed.getElapsedTime(); //.restart();
 
 		Draw( _rWindow, lastDrawCall );
+		
+		oldEvent = e;
 	}
 	
 	return true;
@@ -48,7 +47,6 @@ void Game::Initialize()
 	_pWorld = new b2World( b2Vec2(0, 10.f) );
 	_pWorld->SetAllowSleeping( true );
 	_pWorld->SetDebugDraw( &_rSfmlDebugDraw );
-
 }
 
 
@@ -91,19 +89,25 @@ void Game::LoadContent()
 
 	//load ground
 
-	StaticPlatform road( textureBank["floor"], 400, 550);
+	StaticPlatform road( textureBank["floor"], 400, 600);
 	road.SetWorld( *_pWorld );
 	platforms.push_back( road );
+
+	//load roof
+
+	StaticPlatform roof( textureBank["floor"], 400, 0);
+	roof.SetWorld(*_pWorld);
+	platforms.push_back(roof);
 
 	//create left and right walls
 
 	//left wall
-	StaticPlatform leftWall( textureBank["boundaryWall"], 0, 100);
+	StaticPlatform leftWall( textureBank["boundaryWall"], 0, 200);
 	leftWall.SetWorld( *_pWorld );
 	platforms.push_back( leftWall );
 
 	//right wall
-	StaticPlatform rightWall( textureBank["boundaryWall"], 780, 100);
+	StaticPlatform rightWall( textureBank["boundaryWall"], 780, 200);
 	rightWall.SetWorld( *_pWorld );
 	platforms.push_back( rightWall );
 
@@ -134,7 +138,7 @@ void Game::UnloadContent()
 	delete _pWorld;
 }
 
-void Game::Update(Event gameEvent, Time timeSinceLastUpdateCall ) 
+void Game::Update(Event gameEvent, Event previousGameEvent, Time timeSinceLastUpdateCall ) 
 {
 
 	_pWorld->Step( timeStep, 8, 8);
@@ -153,7 +157,7 @@ void Game::Update(Event gameEvent, Time timeSinceLastUpdateCall )
 	for ( int i = 0; i < bombs.size(); ++i)
 		bombs[i].Update( gameEvent, timeSinceLastUpdateCall );
 	
-	Edward.Update(gameEvent, timeSinceLastUpdateCall, frameTime);
+	Edward.Update(gameEvent, previousGameEvent, timeSinceLastUpdateCall, frameTime);
 }
 
 void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall ) 

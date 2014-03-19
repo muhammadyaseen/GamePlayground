@@ -11,15 +11,19 @@ class Player
 {
 private:
 	bool _alive;
-	
-	typedef enum State {
-		Idle,
-		Walking,
+	bool _inAir;
+
+	enum State {
+		Idle, 
+		Walking, 
 		Running,
-		Jumping
+		Rising, 
+		Falling,
+		Landing
 	};
 
 	State _state;
+	State _previousState;
 
 	b2Body* _pBody;
 	b2BodyDef _bodyDef;
@@ -29,15 +33,13 @@ private:
 	std::map<State, Animation> _animationBank;
 	Animation *_currentAnimation;
 	AnimatedSprite _animatedSprite;
-
-	Sprite _sprite;
 	
 	std::map<State, Texture> _textureBank;
-	Time _updateTime;
-
-	void handleInput(sf::Event e);
+	
+	void handleEvent(Event currentEvent, Event oldEvent);
+	void handleState();
 	void changeSprite(State);
-
+	
 public:
 	Player();
 	Player(Texture& texture, float initX, float initY);
@@ -46,7 +48,7 @@ public:
 	void Create(Texture& texture, float initX, float initY);
 
 	void LoadContent();
-	void Update(sf::Event e, sf::Time dt, Time frameTime);
+	void Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time frameTime);
 	void Draw(sf::RenderWindow& window, sf::Time dt);
 
 	State GetState();

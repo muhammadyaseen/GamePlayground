@@ -44,6 +44,9 @@ public:
 	RenderWindow& _rWindow;
 	SFMLDebugDraw& _rSfmlDebugDraw;
 
+	Event e;
+	Event oldEvent;
+
 	map<std::string, sf::Texture> textureBank;
 	//map<std::string, CharSprite> edwardSprites;
 	map<std::string, Texture> edwardSprites;
@@ -68,7 +71,7 @@ protected:
 
 	void UnloadContent();
 	 
-	void Update(Event gameEvent, Time timeSinceLastUpdateCall);
+	void Update(Event gameEvent, Event oldGameEvent, Time timeSinceLastUpdateCall);
 	 
 	void Draw(RenderWindow& window, Time timeSinceLastDrawCall);
 
