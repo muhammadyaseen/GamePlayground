@@ -101,10 +101,22 @@ void Player::changeSprite(State state)
 		_currentAnimation = &_animationBank[Walking];
 		break;
 
+	case bWalking:
+		_animatedSprite.setLooped(true);
+		_animatedSprite.setFrameTime(sf::seconds(0.2f));
+		_currentAnimation = &_animationBank[bWalking];
+		break;
+
 	case Running:
 		_animatedSprite.setLooped(true);
 		_animatedSprite.setFrameTime(sf::seconds(0.2f));
 		_currentAnimation = &_animationBank[Running];
+		break;
+
+	case bRunning:
+		_animatedSprite.setLooped(true);
+		_animatedSprite.setFrameTime(sf::seconds(0.2f));
+		_currentAnimation = &_animationBank[bRunning];
 		break;
 
 	case Rising:
@@ -164,11 +176,12 @@ void Player::handleState()
 	{
 		if (_pBody->GetLinearVelocity().x < -1.5)
 		{
-			_state = Running;
+			_state = bRunning;
+			
 		}
 		else if (_pBody->GetLinearVelocity().x < 0)
 		{
-			_state = Walking;
+			_state = bWalking;
 		}
 		else if (_pBody->GetLinearVelocity().x > 0)
 		{
@@ -274,6 +287,7 @@ void Player::LoadContent()
 	
 	// Walking Animation
 	texture.loadFromFile("Art\\Edward Elric\\Walk.png");
+	
 	_textureBank.insert(pair<State, Texture>(Walking, texture));
 
 	_animationBank[Walking].setSpriteSheet(_textureBank[Walking]);
@@ -283,6 +297,18 @@ void Player::LoadContent()
 	_animationBank[Walking].addFrame(IntRect( 108,  0, 129 - 108, 51 ));
 	_animationBank[Walking].addFrame(IntRect( 143,  0, 166 - 143, 51 ));
 	_animationBank[Walking].addFrame(IntRect( 179,  0, 207 - 179, 51 ));
+
+	// Back Walking Animation
+	texture.loadFromFile("Art\\Edward Elric\\bWalk.png");
+	_textureBank.insert(pair<State, Texture>(bWalking, texture));
+	_animationBank[bWalking].setSpriteSheet(_textureBank[bWalking]);
+	
+	_animationBank[bWalking].addFrame(IntRect(   0,  0,  30 -   0, 51 ));
+	_animationBank[bWalking].addFrame(IntRect(  35,  0,  65 -  35, 51 ));
+	_animationBank[bWalking].addFrame(IntRect(  72,  0, 103 -  72, 51 ));
+	_animationBank[bWalking].addFrame(IntRect( 108,  0, 133 - 108, 51 ));
+	_animationBank[bWalking].addFrame(IntRect( 143,  0, 168 - 143, 51 ));
+	_animationBank[bWalking].addFrame(IntRect( 179,  0, 207 - 179, 51 ));
 
 	// Running Animation
 	texture.loadFromFile("Art\\Edward Elric\\Run.png");
@@ -295,6 +321,24 @@ void Player::LoadContent()
 	_animationBank[Running].addFrame(IntRect( 174,  0, 214 - 174, 51 ));
 	_animationBank[Running].addFrame(IntRect( 221,  0, 277 - 221, 51 ));
 	_animationBank[Running].addFrame(IntRect( 285,  0, 337 - 285, 51 ));
+
+
+	// Back Running Animation
+	texture.loadFromFile("Art\\Edward Elric\\bRun.png");
+	_textureBank.insert(pair<State, Texture>(bRunning, texture));
+
+	_animationBank[bRunning].setSpriteSheet(_textureBank[bRunning]);
+	_animationBank[bRunning].addFrame(IntRect( 297,  0, 337 - 297, 51 ));
+	_animationBank[bRunning].addFrame(IntRect( 235,  0, 294- 235, 51 ));
+	_animationBank[bRunning].addFrame(IntRect( 175,  0, 230 - 175, 51 ));
+	_animationBank[bRunning].addFrame(IntRect( 116,  0, 175 - 116, 51 ));
+	_animationBank[bRunning].addFrame(IntRect(  54,  0,  106 -  54, 51 ));
+	_animationBank[bRunning].addFrame(IntRect(   0,  0,  52 -   0, 51 ));
+	
+	
+	
+	
+	
 
 	// Jumping Animation
 	texture.loadFromFile("Art\\Edward Elric\\Jump.png");

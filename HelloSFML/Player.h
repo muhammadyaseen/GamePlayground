@@ -15,8 +15,8 @@ private:
 
 	enum State {
 		Idle, 
-		Walking, 
-		Running,
+		Walking,bWalking, 
+		Running,bRunning,
 		Rising, 
 		Falling,
 		Landing
