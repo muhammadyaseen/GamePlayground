@@ -18,7 +18,7 @@ public:
 
    StaticPlatform(float width, float height);
    
-   StaticPlatform(sf::Texture& texture, float initX, float initY, float rotation = 0);
+   StaticPlatform(sf::Texture& texture, float initX, float initY, float scale_x=1,float scale_y=1, float rotation=0);
 
    StaticPlatform();
    

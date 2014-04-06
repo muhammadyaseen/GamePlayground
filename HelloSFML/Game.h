@@ -14,6 +14,8 @@
 #include "SFMLDebugDraw.h"
 #include "Player.h"
 
+
+
 using namespace std;
 using namespace sf;
 
@@ -58,6 +60,9 @@ public:
 	
 	Player Edward;
 	Clock frameClock;
+
+	
+	View *curScr;
 
 	//End demo 'GameActor' Declarations
 

@@ -22,7 +22,7 @@ StaticPlatform::StaticPlatform(float w, float h)
 
 }
 
-StaticPlatform::StaticPlatform(sf::Texture& texture, float initX, float initY, float rotation)
+StaticPlatform::StaticPlatform(sf::Texture& texture, float initX, float initY, float scale_x, float scale_y, float rotation)
 {
 	_sprite.setTexture( texture );
 	
@@ -30,15 +30,17 @@ StaticPlatform::StaticPlatform(sf::Texture& texture, float initX, float initY, f
 
 	_sprite.setRotation( rotation );
 
+	_sprite.setScale(scale_x,scale_y);
 	_bodyDef.position.Set( MathHelper::ToUnit( initX ), MathHelper::ToUnit( initY ) ); 
 
 	_bodyDef.angle = MathHelper::DegreeToRadian( rotation );
 
+
 	_bodyDef.type = b2_staticBody;
 
-	_bodyShape.SetAsBox( 
-		MathHelper::ToUnit( texture.getSize().x / 2.f ),
-		MathHelper::ToUnit( texture.getSize().y / 2.f )
+	_bodyShape.SetAsBox(
+		MathHelper::ToUnit( texture.getSize().x*scale_x /2.f ),
+		MathHelper::ToUnit( texture.getSize().y*scale_y / 2.f )
 	);
 
 	cout << "(" << _bodyDef.position.x << "," << _bodyDef.position.y << ")" << endl;
@@ -46,7 +48,7 @@ StaticPlatform::StaticPlatform(sf::Texture& texture, float initX, float initY, f
 	_fixtureDef.shape = &_bodyShape;
 	_fixtureDef.density = 1.f;
 	_fixtureDef.friction = 0.5f;
-	_fixtureDef.restitution = 0.5f;
+	_fixtureDef.restitution = 0.f;
 
 }
 

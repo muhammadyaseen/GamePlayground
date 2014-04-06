@@ -1,5 +1,6 @@
 #include "Game.h"
 
+
 // @see : http://stackoverflow.com/questions/10647448/why-constant-data-member-of-a-class-need-to-be-initialized-at-the-constructor
 Game::Game(RenderWindow& window, SFMLDebugDraw& debugDraw) 
 	: timeStep( 1.0f / 60.0f ), _rWindow(window), _rSfmlDebugDraw(debugDraw)
@@ -12,7 +13,10 @@ bool Game::Run()
 	Initialize();
 	LoadContent();
 	Clock timeElapsed;
+	
 	_rWindow.setKeyRepeatEnabled(true);
+
+	curScr=new View(_rWindow.getDefaultView());
 	
 	while ( _rWindow.isOpen() )
 	{
@@ -27,7 +31,7 @@ bool Game::Run()
 
 		//Time lastUpdateCall = timeElapsed.restart();
 
-		if ( timeElapsed.getElapsedTime().asMilliseconds() >= 16 )
+		if ( timeElapsed.getElapsedTime().asMilliseconds() >= 1 )
 		{
 			Update( e, oldEvent ,timeElapsed.restart() );
 		}
@@ -89,13 +93,13 @@ void Game::LoadContent()
 
 	//load ground
 
-	StaticPlatform road( textureBank["floor"], 400, 600);
+	StaticPlatform road(textureBank["floor"], 400, 600,2);
 	road.SetWorld( *_pWorld );
 	platforms.push_back( road );
 
 	//load roof
 
-	StaticPlatform roof( textureBank["floor"], 400, 0);
+	StaticPlatform roof( textureBank["floor"], 400, 0,2);
 	roof.SetWorld(*_pWorld);
 	platforms.push_back(roof);
 
@@ -106,13 +110,13 @@ void Game::LoadContent()
 	leftWall.SetWorld( *_pWorld );
 	platforms.push_back( leftWall );
 
-	//right wall
-	StaticPlatform rightWall( textureBank["boundaryWall"], 780, 200);
-	rightWall.SetWorld( *_pWorld );
-	platforms.push_back( rightWall );
+	////right wall
+	//StaticPlatform rightWall( textureBank["boundaryWall"], 780, 200);
+	//rightWall.SetWorld( *_pWorld );
+	//platforms.push_back( rightWall );
 
 	//load spike platform
-	StaticPlatform spike( textureBank["spikes"], 350, 200, 45);
+	StaticPlatform spike( textureBank["spikes"], 350, 200, 1, 1, 45);
 	spike.SetWorld( *_pWorld );
 	platforms.push_back( spike );
 
@@ -141,7 +145,7 @@ void Game::UnloadContent()
 void Game::Update(Event gameEvent, Event previousGameEvent, Time timeSinceLastUpdateCall ) 
 {
 
-	_pWorld->Step( timeStep, 8, 8);
+	_pWorld->Step(timeStep, 8, 8);
 
 	Time frameTime = frameClock.restart();
 
@@ -180,7 +184,7 @@ void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall )
 	
 	Edward.Draw(_rWindow, timeSinceLastDrawCall);
 		
-	_pWorld->DrawDebugData();
+	//_pWorld->DrawDebugData();
 
 	_rWindow.display();
 
@@ -191,13 +195,16 @@ void Game::HandleInput(Event gameEvent)
 	if ( gameEvent.type == Event::KeyPressed )
 	{
 	
-		if ( gameEvent.key.code == Keyboard::C ) //spawn box
+		
+		if ( gameEvent.key.code == Keyboard::Right ) //spawn box
 		{
-			Vector2i mousePos = Mouse::getPosition( _rWindow );
+			/*Vector2i mousePos = Mouse::getPosition( _rWindow );
 
 			Box crate( textureBank["box"], mousePos.x, mousePos.y);
 			crate.SetWorld( *_pWorld );
-			boxes.push_back( crate );
+			boxes.push_back( crate );*/
+			curScr->move(1,0);
+			_rWindow.setView(*curScr);
 
 		}
 
@@ -211,8 +218,12 @@ void Game::HandleInput(Event gameEvent)
 
 		}
 
-		if ( gameEvent.key.code == Keyboard::C ) //increase ball radius
-		{}
+		if ( gameEvent.key.code == Keyboard::X ) //increase ball radius
+		{
+			Bomb explosive( textureBank["bomb"], 400, 550, 200 );
+			explosive.SetWorld( *_pWorld );
+			bombs.push_back( explosive );
+		}
 
 		if ( gameEvent.key.code == Keyboard::Q ) //decrease ball radius
 		{}

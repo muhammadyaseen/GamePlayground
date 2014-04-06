@@ -15,7 +15,7 @@ Player::Player(Texture& texture, float initX, float initY)
 
 	_bodyDef.position.Set(MathHelper::ToUnit(initX), MathHelper::ToUnit(initY));
 	_bodyDef.type = b2_dynamicBody;
-	_bodyDef.fixedRotation = true;
+	_bodyDef.fixedRotation = false;
 
 	_bodyShape.SetAsBox(
 		MathHelper::ToUnit(texture.getSize().x / 2.f),
@@ -26,8 +26,9 @@ Player::Player(Texture& texture, float initX, float initY)
 
 	_fixtureDef.shape = &_bodyShape;
 	_fixtureDef.density = 1.f;
-	_fixtureDef.friction = 0.5f;
-	_fixtureDef.restitution = 0.0f;
+	_fixtureDef.friction = 12.f;
+	_fixtureDef.restitution = 0.3f;
+	
 }
 
 void Player::Create(Texture& texture, float initX, float initY)
@@ -52,8 +53,8 @@ void Player::Create(Texture& texture, float initX, float initY)
 	cout << "(" << _bodyDef.position.x << "," << _bodyDef.position.y << ")" << endl;
 
 	_fixtureDef.shape = &_bodyShape;
-	_fixtureDef.density = 1.f;
-	_fixtureDef.friction = 0.5f;
+	_fixtureDef.density = 0.8f;
+	_fixtureDef.friction = 10.f;
 	_fixtureDef.restitution = 0.3f;
 }
 
@@ -145,6 +146,9 @@ void Player::handleState()
 	else if (_pBody->GetLinearVelocity().y == 0)
 	{
 		_state = Idle;
+		/*_pBody->GetFixtureList()->SetRestitution(0.f);
+		_pBody->GetFixtureList()->SetRestitution(0.3f);*/
+		
 	}
 	else if (_pBody->GetLinearVelocity().y < 0)
 	{
@@ -189,12 +193,12 @@ void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 		{
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
-				_pBody->SetLinearVelocity(b2Vec2(3, 0));
+				_pBody->SetLinearVelocity(b2Vec2(3, _pBody->GetLinearVelocity().y));
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
-				_pBody->SetLinearVelocity(b2Vec2(-3, 0));
+				_pBody->SetLinearVelocity(b2Vec2(-3, _pBody->GetLinearVelocity().y));
 			}
 		}
 		else
@@ -223,17 +227,17 @@ void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 				// Right jump
 				if (Keyboard::isKeyPressed(Keyboard::Right))
 				{
-					_pBody->ApplyLinearImpulse(b2Vec2(1.5, 10), _pBody->GetWorldCenter());
+					_pBody->ApplyLinearImpulse(b2Vec2(1.5,-5), _pBody->GetWorldCenter());
 				}
 				// Left jump
 				else if (Keyboard::isKeyPressed(Keyboard::Right))
 				{
-					_pBody->ApplyLinearImpulse(b2Vec2(-1.5, 10), _pBody->GetWorldCenter());
+					_pBody->ApplyLinearImpulse(b2Vec2(-1.5,-5), _pBody->GetWorldCenter());
 				}
 				// Jump up
 				else
 				{
-					_pBody->ApplyLinearImpulse(b2Vec2(0, 10), _pBody->GetWorldCenter());
+					_pBody->ApplyLinearImpulse(b2Vec2(0,-5), _pBody->GetWorldCenter());
 				}
 			}
 		}
@@ -242,13 +246,14 @@ void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 		{
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
-				_pBody->SetLinearVelocity(b2Vec2(1.0, _pBody->GetLinearVelocity().y));
+				_pBody->SetLinearVelocity(b2Vec2(1.5f, _pBody->GetLinearVelocity().y));
 			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
-				_pBody->ApplyForceToCenter(b2Vec2(-0.8, 0));
+				_pBody->ApplyForceToCenter(b2Vec2(-1.5f, 0));
 			}
+			
 		}
 	}
 }
