@@ -9,6 +9,7 @@ class Ranger :
 	void changeSprite(State _state);
 public:
 	Ranger();
+	b2Body* GetPhysicsBody();
 	void LoadContent();
 	void Update(Event gameEvent, Player& player, Time dt, Time frameTime);
 };

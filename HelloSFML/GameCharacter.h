@@ -12,6 +12,7 @@ class GameCharacter
 {
 protected:
 	bool _alive;
+	bool _movingForward;
 
 	b2Body* _pBody;
 	b2BodyDef _bodyDef;

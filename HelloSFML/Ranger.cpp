@@ -120,7 +120,7 @@ void Ranger::LoadContent()
 
 	_animatedSprite.setAnimation(*_currentAnimation);
 
-	create(_textureBank[Idle], 200, 400);
+	create(_textureBank[Idle], 500, 500);
 }
 
 void Ranger::create(Texture& texture, float initX, float initY)
@@ -189,6 +189,9 @@ void Ranger::handleState()
 		{
 			_state = Running;
 		}
+
+		if (_pBody->GetLinearVelocity().x < -0.1) _movingForward = false;
+		else if (_pBody->GetLinearVelocity().x > 0.1) _movingForward = true;
 	}
 
 	// If movement is in neither of the dimensions and the player is just standing
@@ -244,11 +247,20 @@ void Ranger::Update(Event gameEvent, Player& player, Time dt, Time frameTime)
 		MathHelper::ToPixel(_pBody->GetPosition().x),
 		MathHelper::ToPixel(_pBody->GetPosition().y)
 		);
-
+	
 	_animatedSprite.update(frameTime);
+
+	// Scaling is like a multiplication by -1. So it should only
+	// be done once. The following code tries to guarantee that.
+	if (_movingForward && _animatedSprite.getScale().x < 0)
+		_animatedSprite.scale(-1.f, 1.f);
+	else if (!_movingForward && _animatedSprite.getScale().x > 0)
+		_animatedSprite.scale(-1.f, 1.f);
 }
 
 Ranger::Ranger()
 {
 
 }
+
+b2Body* Ranger::GetPhysicsBody() { return _pBody; }

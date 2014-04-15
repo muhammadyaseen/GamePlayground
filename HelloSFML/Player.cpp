@@ -153,6 +153,9 @@ void Player::handleState()
 		{
 			_state = Running;
 		}
+
+		if (_pBody->GetLinearVelocity().x < -0.1) _movingForward = false;
+		else if (_pBody->GetLinearVelocity().x > 0.1) _movingForward = true;
 	}
 
 	// If movement is in neither of the dimensions and the player is just standing
@@ -404,7 +407,7 @@ void Player::LoadContent()
 
 	// Load hurt state
 
-	create(_textureBank[Idle], 200, 400);
+	create(_textureBank[Idle], 200, 500);
 }
 
 void Player::Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time frameTime)
@@ -424,6 +427,14 @@ void Player::Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time f
 		);
 
 	_animatedSprite.update(frameTime);
+
+	// Scaling is like a multiplication by -1. So it should only
+	// be done once. The following code tries to guarantee that.
+	if (_movingForward && _animatedSprite.getScale().x < 0)
+		_animatedSprite.scale(-1.f, 1.f);
+	else if (!_movingForward && _animatedSprite.getScale().x > 0) 
+		_animatedSprite.scale(-1.f, 1.f);
+	
 }
 
 
