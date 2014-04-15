@@ -13,13 +13,14 @@
 #include "StaticPlatform.h"
 #include "SFMLDebugDraw.h"
 #include "Player.h"
+#include "Enemy.h"
+#include "Ranger.h"
 
 using namespace std;
 using namespace sf;
 
 class Game
 {
-
 public:
 	Game(RenderWindow& w, SFMLDebugDraw& debugDraw);
 
@@ -47,7 +48,7 @@ public:
 	Event e;
 	Event oldEvent;
 
-	map<std::string, sf::Texture> textureBank;
+	map<std::string, sf::Texture> _textureBank;
 	//map<std::string, CharSprite> edwardSprites;
 	map<std::string, Texture> edwardSprites;
 
@@ -58,6 +59,8 @@ public:
 	
 	Player Edward;
 	Clock frameClock;
+
+	Ranger enemy;
 
 	//End demo 'GameActor' Declarations
 

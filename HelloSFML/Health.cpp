@@ -1,6 +1,12 @@
 #include "Health.h"
 
-// Constructor
+// Constructors
+Health::Health()
+{
+	_maxHealth = 0;
+	_currentHealth = 0;
+}
+
 Health::Health(int maxHealth)
 {
 	_maxHealth = maxHealth;

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include "Ball.h"
+//#include "Ball.h"
 
 using namespace std;
 using namespace sf;
@@ -30,7 +30,7 @@ Player::Player(Texture& texture, float initX, float initY)
 	_fixtureDef.restitution = 0.0f;
 }
 
-void Player::Create(Texture& texture, float initX, float initY)
+void Player::create(Texture& texture, float initX, float initY)
 {
 	//_sprite.setTexture(texture);
 	//_sprite.setTextureRect(IntRect(0, 0, texture.getSize().x / 3, texture.getSize().y));
@@ -57,36 +57,15 @@ void Player::Create(Texture& texture, float initX, float initY)
 	_fixtureDef.restitution = 0.3f;
 }
 
-//
-//Player::Player(float initX, float initY)
-//{
-//	//_sprite.setTexture(texture);
-//	//_sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y / 2.f);
-//
-//	_bodyDef.position.Set(MathHelper::ToUnit(initX), MathHelper::ToUnit(initY));
-//	_bodyDef.type = b2_dynamicBody;
-//	_bodyDef.fixedRotation = true;
-//	
-//	//_bodyShape.m_radius = MathHelper::ToUnit(texture.getSize().x / 2.f);
-//	_bodyShape.m_vertexCount = 4;
-//
-//	std::cout << "(" << _bodyDef.position.x << "," << _bodyDef.position.y << ")" << std::endl;
-//
-//	_fixtureDef.shape = &_bodyShape;
-//	_fixtureDef.density = 1.f;
-//	_fixtureDef.friction = 0.9f;
-//	_fixtureDef.restitution = 0.5f;
-//}
-//
 void Player::SetWorld(b2World & world)
 {
 	_pBody = world.CreateBody(&_bodyDef);
 	_pBody->CreateFixture(&_fixtureDef);
 }
 
-void Player::changeSprite(State state)
+void Player::changeSprite(State _state)
 {
-	switch (state)
+	switch (_state)
 	{
 	case Idle:
 		_animatedSprite.setLooped(true);
@@ -134,11 +113,11 @@ void Player::changeSprite(State state)
 
 void Player::handleState()
 {
-	// Remember what the player's state was in the previous update
+	// Remember what the player's _state was in the previous update
 	_previousState = _state;
 
-	// Change the current state according to vertical events
-	if (_pBody->GetLinearVelocity().y > 0)
+	// Change the current _state according to vertical events
+	if (_pBody->GetLinearVelocity().y > 0.1)
 	{
 		_state = Falling;
 	}
@@ -146,7 +125,7 @@ void Player::handleState()
 	{
 		_state = Idle;
 	}
-	else if (_pBody->GetLinearVelocity().y < 0)
+	else if (_pBody->GetLinearVelocity().y < -0.1)
 	{
 		_state = Rising;
 	}
@@ -155,7 +134,7 @@ void Player::handleState()
 	if (_state != Rising && _state != Falling) _inAir = false;
 	else _inAir = true;
 
-	// Change the current state according to horizontal events
+	// Change the current _state according to horizontal events
 	if (!_inAir)
 	{
 		if (_pBody->GetLinearVelocity().x < -1.5)
@@ -176,85 +155,189 @@ void Player::handleState()
 		}
 	}
 
-	// If movement is in neither of the dimentions and the player is just standing
+	// If movement is in neither of the dimensions and the player is just standing
+
+	// TODO: Hurt animation
 }
 
 void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 {
+
+#pragma region CommentedCode
+	// Events that you don't want to be perpetual (eg. initiating a jump)
+	//if (gameEvent.type == Event::KeyPressed)
+	//{
+	//	// Making sure the player is in a position to take action
+	//	if (!_inAir)
+	//	{
+	//		// Initializing a jump based on keys pressed
+	//		if (gameEvent.key.code == Keyboard::Up)
+	//		{
+	//			// Right jump
+	//			if (Keyboard::isKeyPressed(Keyboard::Right))
+	//			{
+	//				_pBody->ApplyLinearImpulse(b2Vec2(2, 10), _pBody->GetWorldCenter());
+	//			}
+	//			// Left jump
+	//			else if (Keyboard::isKeyPressed(Keyboard::Right))
+	//			{
+	//				_pBody->ApplyLinearImpulse(b2Vec2(-2, 10), _pBody->GetWorldCenter());
+	//			}
+	//			// Jump up
+	//			else
+	//			{
+	//				_pBody->ApplyLinearImpulse(b2Vec2(0, 10), _pBody->GetWorldCenter());
+	//			}
+	//		}
+	//	}
+	//	// If the player is performing a jump, the light movements
+	//	else
+	//	{
+	//		if (Keyboard::isKeyPressed(Keyboard::Right))
+	//		{
+	//			_pBody->ApplyForceToCenter(b2Vec2( 1, 0));
+	//		}
+
+	//		if (Keyboard::isKeyPressed(Keyboard::Left))
+	//		{
+	//			_pBody->ApplyForceToCenter(b2Vec2(-1, 0));
+	//		}
+	//	}
+	//}
 	
 	// Leftward or rightward movement
+	//if (!_inAir)
+	//{
+	//	if (Keyboard::isKeyPressed(Keyboard::LShift))
+	//	{
+	//		if (Keyboard::isKeyPressed(Keyboard::Right))
+	//		{
+	//			_pBody->SetLinearVelocity(b2Vec2(3, 0));
+	//		}
+
+	//		if (Keyboard::isKeyPressed(Keyboard::Left))
+	//		{
+	//			_pBody->SetLinearVelocity(b2Vec2(-3, 0));
+	//		}
+	//	}
+	//	else
+	//	{
+	//		if (Keyboard::isKeyPressed(Keyboard::Right))
+	//		{
+	//			_pBody->SetLinearVelocity(b2Vec2(1.5, _pBody->GetLinearVelocity().y));
+	//		}
+
+	//		if (Keyboard::isKeyPressed(Keyboard::Left))
+	//		{
+	//			_pBody->SetLinearVelocity(b2Vec2(-1.5, _pBody->GetLinearVelocity().y));
+	//		}
+	//	}
+	//}
+
+#pragma endregion
+
+	// When player is grounded
 	if (!_inAir)
+	{
+		// Running and jumping
+		if (Keyboard::isKeyPressed(Keyboard::LShift))
+		{
+			if (Keyboard::isKeyPressed(Keyboard::Up))
+			{
+				if (Keyboard::isKeyPressed(Keyboard::Right))
+				{
+					_pBody->ApplyLinearImpulse(b2Vec2( 3, 8), _pBody->GetWorldCenter());
+				}
+				else if (Keyboard::isKeyPressed(Keyboard::Left))
+				{
+					_pBody->ApplyLinearImpulse(b2Vec2(-3, 8), _pBody->GetWorldCenter());
+				}
+				else
+				{
+					_pBody->ApplyLinearImpulse(b2Vec2(0, 8), _pBody->GetWorldCenter());
+				}
+			}
+			else
+			{
+				if (Keyboard::isKeyPressed(Keyboard::Right))
+				{
+					_pBody->SetLinearVelocity(b2Vec2( 3, _pBody->GetLinearVelocity().y));
+				}
+				else if (Keyboard::isKeyPressed(Keyboard::Left))
+				{
+					_pBody->SetLinearVelocity(b2Vec2(-3, _pBody->GetLinearVelocity().y));
+				}
+			}
+		} // End of running and jumping
+
+		// Walking and jumping
+		else
+		{
+			// Jumping
+			if (Keyboard::isKeyPressed(Keyboard::Up))
+			{
+				if (Keyboard::isKeyPressed(Keyboard::Right))
+				{
+					_pBody->ApplyLinearImpulse(b2Vec2(10, 8), _pBody->GetWorldCenter());
+				}
+				else if (Keyboard::isKeyPressed(Keyboard::Left))
+				{
+					_pBody->ApplyLinearImpulse(b2Vec2(-10, 8), _pBody->GetWorldCenter());
+				}
+				else
+				{
+					_pBody->ApplyLinearImpulse(b2Vec2(0, 8), _pBody->GetWorldCenter());
+				}
+			}
+			
+			// Walking
+			else
+			{
+				if (Keyboard::isKeyPressed(Keyboard::Right))
+				{
+					_pBody->SetLinearVelocity(b2Vec2( 1.5, _pBody->GetLinearVelocity().y));
+				}
+				else if (Keyboard::isKeyPressed(Keyboard::Left))
+				{
+					_pBody->SetLinearVelocity(b2Vec2(-1.5, _pBody->GetLinearVelocity().y));
+				}
+			}
+		} // End of walking and jumping
+	} // End of grounded actions
+
+	// Actions to do in air
+	else
 	{
 		if (Keyboard::isKeyPressed(Keyboard::LShift))
 		{
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
-				_pBody->SetLinearVelocity(b2Vec2(3, 0));
+				_pBody->SetLinearVelocity(b2Vec2( 3, _pBody->GetLinearVelocity().y));
 			}
-
-			if (Keyboard::isKeyPressed(Keyboard::Left))
+			else if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
-				_pBody->SetLinearVelocity(b2Vec2(-3, 0));
+				_pBody->SetLinearVelocity(b2Vec2(-3, _pBody->GetLinearVelocity().y));
 			}
 		}
 		else
 		{
 			if (Keyboard::isKeyPressed(Keyboard::Right))
 			{
-				_pBody->SetLinearVelocity(b2Vec2(1.5, _pBody->GetLinearVelocity().y));
+				_pBody->SetLinearVelocity(b2Vec2( 1.5, _pBody->GetLinearVelocity().y));
 			}
-
-			if (Keyboard::isKeyPressed(Keyboard::Left))
+			else if (Keyboard::isKeyPressed(Keyboard::Left))
 			{
 				_pBody->SetLinearVelocity(b2Vec2(-1.5, _pBody->GetLinearVelocity().y));
 			}
 		}
-	}
+	} // End of air actions
 	
-	// Events that you don't want to be perpetual (eg. initiating a jump)
-	if (gameEvent.type == Event::KeyPressed)
-	{
-		// Making sure the player is in a position to take action
-		if (!_inAir)
-		{
-			//Initializing a jump based on keys pressed
-			if (gameEvent.key.code == Keyboard::Up)
-			{
-				// Right jump
-				if (Keyboard::isKeyPressed(Keyboard::Right))
-				{
-					_pBody->ApplyLinearImpulse(b2Vec2(1.5, 10), _pBody->GetWorldCenter());
-				}
-				// Left jump
-				else if (Keyboard::isKeyPressed(Keyboard::Right))
-				{
-					_pBody->ApplyLinearImpulse(b2Vec2(-1.5, 10), _pBody->GetWorldCenter());
-				}
-				// Jump up
-				else
-				{
-					_pBody->ApplyLinearImpulse(b2Vec2(0, 10), _pBody->GetWorldCenter());
-				}
-			}
-		}
-		// If the player is performing a jump, the light movements
-		else
-		{
-			if (Keyboard::isKeyPressed(Keyboard::Right))
-			{
-				_pBody->SetLinearVelocity(b2Vec2(1.0, _pBody->GetLinearVelocity().y));
-			}
-
-			if (Keyboard::isKeyPressed(Keyboard::Left))
-			{
-				_pBody->ApplyForceToCenter(b2Vec2(-0.8, 0));
-			}
-		}
-	}
 }
 
 void Player::LoadContent()
 {
+	_health = Health(50);
+	
 	Texture texture;
 	
 	// Idle Animation
@@ -319,20 +402,9 @@ void Player::LoadContent()
 
 	_animatedSprite.setAnimation(*_currentAnimation);
 
-	//_spriteBank.insert(pair<State, Texture>(Idle, EdSprite));
+	// Load hurt state
 
-	//EdSprite.loadFromFile("Art\\Edward Elric\\Walk.png");
-	//_spriteBank.insert(pair<State, Texture>(Walking, EdSprite));
-
-	//EdSprite.loadFromFile("Art\\Edward Elric\\Jump.png");
-	//_spriteBank.insert(pair<State, Texture>(Jumping, EdSprite));
-
-	//EdSprite.loadFromFile("Art\\Edward Elric\\Run.png");
-	//_spriteBank.insert(pair<State, Texture>(Running, EdSprite));
-
-	// TODO: Set up the Draw Rectangle
-	Create(_textureBank[Idle], 200, 400);
-	//changeSprite(Idle);
+	create(_textureBank[Idle], 200, 400);
 }
 
 void Player::Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time frameTime)
@@ -354,10 +426,11 @@ void Player::Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time f
 	_animatedSprite.update(frameTime);
 }
 
-void Player::Draw(sf::RenderWindow& window, sf::Time dt)
+
+void Player::Damage(int amount)
 {
-	window.draw(_animatedSprite);
-	//window.draw(_sprite);
+	_health -= amount;
+	// TODO: Change state to Hurt
 }
 
 Player::State Player::GetState() { return _state; }

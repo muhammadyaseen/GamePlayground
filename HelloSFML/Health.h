@@ -6,6 +6,7 @@ private:
 	int _maxHealth;
 
 public:
+	Health();
 	Health(int maxHealth);
 
 	// Operator overloads

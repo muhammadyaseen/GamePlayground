@@ -46,11 +46,11 @@
 //	walkingAnimationUp.addFrame(sf::IntRect(32, 96, 32, 32));
 //	walkingAnimationUp.addFrame(sf::IntRect(0, 96, 32, 32));
 //
-//	Animation* currentAnimation = &walkingAnimationDown;
+//	Animation* _currentAnimation = &walkingAnimationDown;
 //
 //	// set up AnimatedSprite
-//	AnimatedSprite animatedSprite(sf::seconds(0.2), true, false);
-//	animatedSprite.setPosition(sf::Vector2f(screenDimensions / 2));
+//	AnimatedSprite _animatedSprite(sf::seconds(0.2), true, false);
+//	_animatedSprite.setPosition(sf::Vector2f(screenDimensions / 2));
 //
 //	sf::Clock frameClock;
 //
@@ -74,44 +74,44 @@
 //		sf::Vector2f movement(0.f, 0.f);
 //		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 //		{
-//			currentAnimation = &walkingAnimationUp;
+//			_currentAnimation = &walkingAnimationUp;
 //			movement.y -= speed;
 //			noKeyWasPressed = false;
 //		}
 //		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 //		{
-//			currentAnimation = &walkingAnimationDown;
+//			_currentAnimation = &walkingAnimationDown;
 //			movement.y += speed;
 //			noKeyWasPressed = false;
 //		}
 //		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 //		{
-//			currentAnimation = &walkingAnimationLeft;
+//			_currentAnimation = &walkingAnimationLeft;
 //			movement.x -= speed;
 //			noKeyWasPressed = false;
 //		}
 //		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 //		{
-//			currentAnimation = &walkingAnimationRight;
+//			_currentAnimation = &walkingAnimationRight;
 //			movement.x += speed;
 //			noKeyWasPressed = false;
 //		}
-//		animatedSprite.play(*currentAnimation);
-//		animatedSprite.move(movement * frameTime.asSeconds());
+//		_animatedSprite.play(*_currentAnimation);
+//		_animatedSprite.move(movement * frameTime.asSeconds());
 //
 //		// if no key was pressed stop the animation
 //		if (noKeyWasPressed)
 //		{
-//			animatedSprite.stop();
+//			_animatedSprite.stop();
 //		}
 //		noKeyWasPressed = true;
 //
 //		// update AnimatedSprite
-//		animatedSprite.update(frameTime);
+//		_animatedSprite.update(frameTime);
 //
 //		// draw
 //		window.clear();
-//		window.draw(animatedSprite);
+//		window.draw(_animatedSprite);
 //		window.display();
 //	}
 //

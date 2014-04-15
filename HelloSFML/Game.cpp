@@ -13,30 +13,31 @@ bool Game::Run()
 	LoadContent();
 	Clock timeElapsed;
 	_rWindow.setKeyRepeatEnabled(true);
-	
-	while ( _rWindow.isOpen() )
+
+	while (_rWindow.isOpen())
 	{
 		_rWindow.pollEvent(e);
 
-		if ( e.type == Event::Closed )
+		if (e.type == Event::Closed)
 		{
 			_rWindow.close();
 		}
 		
-		HandleInput( e );
+		HandleInput(e);
 
 		//Time lastUpdateCall = timeElapsed.restart();
 
-		if ( timeElapsed.getElapsedTime().asMilliseconds() >= 16 )
+		if (timeElapsed.getElapsedTime().asMilliseconds() >= 16)
 		{
-			Update( e, oldEvent ,timeElapsed.restart() );
+			Update(e, oldEvent, timeElapsed.restart());
 		}
-	
+
 		Time lastDrawCall = /*lastUpdateCall +*/ timeElapsed.getElapsedTime(); //.restart();
 
-		Draw( _rWindow, lastDrawCall );
-		
+		Draw(_rWindow, lastDrawCall);
+
 		oldEvent = e;
+
 	}
 	
 	return true;
@@ -56,74 +57,74 @@ void Game::LoadContent()
 	
 	Texture ground;
 	ground.loadFromFile("Art\\Floor.png");
-	textureBank.insert( pair<string, Texture>("floor", ground) );
+	_textureBank.insert( pair<string, Texture>("floor", ground) );
 
 	Texture boundaryWall;
 	boundaryWall.loadFromFile("Art\\BoundaryWall.png");
-	textureBank.insert( pair<string, Texture>("boundaryWall", boundaryWall) );
+	_textureBank.insert( pair<string, Texture>("boundaryWall", boundaryWall) );
 
 
 	Texture ball;
 	ball.loadFromFile("Art\\Skull.png");
-	textureBank.insert( pair<string, Texture>("ball", ball) );
+	_textureBank.insert( pair<string, Texture>("ball", ball) );
 
 	Texture box;
 	box.loadFromFile("Art\\Crate.png");
-	textureBank.insert( pair<string, Texture>("box", box) );
+	_textureBank.insert( pair<string, Texture>("box", box) );
 
 	Texture spikePlatform;
 	spikePlatform.loadFromFile("Art\\Spikes.png");
-	textureBank.insert( pair<string, Texture>("spikes", spikePlatform) );
+	_textureBank.insert( pair<string, Texture>("spikes", spikePlatform) );
 
 	Texture bomb;
 	bomb.loadFromFile("Art\\Bomb.png");
-	textureBank.insert( pair<string, Texture>("bomb", bomb) );
+	_textureBank.insert( pair<string, Texture>("bomb", bomb) );
 
 	Texture bombParticle;
 	bombParticle.loadFromFile("Art\\BombParticle.png");
-	textureBank.insert( pair<string, Texture>("bombParticle", bombParticle) );
+	_textureBank.insert( pair<string, Texture>("bombParticle", bombParticle) );
 
-	Bomb explosive( textureBank["bomb"], 400, 550, 200 );
+	Bomb explosive( _textureBank["bomb"], 400, 550, 200 );
 	explosive.SetWorld( *_pWorld );
 	bombs.push_back( explosive );
 
 	//load ground
 
-	StaticPlatform road( textureBank["floor"], 400, 600);
+	StaticPlatform road( _textureBank["floor"], 400, 600);
 	road.SetWorld( *_pWorld );
 	platforms.push_back( road );
 
 	//load roof
 
-	StaticPlatform roof( textureBank["floor"], 400, 0);
+	StaticPlatform roof( _textureBank["floor"], 400, 0);
 	roof.SetWorld(*_pWorld);
 	platforms.push_back(roof);
 
 	//create left and right walls
 
 	//left wall
-	StaticPlatform leftWall( textureBank["boundaryWall"], 0, 200);
+	StaticPlatform leftWall( _textureBank["boundaryWall"], 0, 200);
 	leftWall.SetWorld( *_pWorld );
 	platforms.push_back( leftWall );
 
 	//right wall
-	StaticPlatform rightWall( textureBank["boundaryWall"], 780, 200);
+	StaticPlatform rightWall( _textureBank["boundaryWall"], 780, 200);
 	rightWall.SetWorld( *_pWorld );
 	platforms.push_back( rightWall );
 
 	//load spike platform
-	StaticPlatform spike( textureBank["spikes"], 350, 200, 45);
+	StaticPlatform spike( _textureBank["spikes"], 350, 200, 45);
 	spike.SetWorld( *_pWorld );
 	platforms.push_back( spike );
 
 
 	//load balls
-	Ball skullBall( textureBank["ball"], 650, 0);
+	Ball skullBall( _textureBank["ball"], 650, 0);
 	skullBall.SetWorld( *_pWorld );
 	balls.push_back( skullBall );
 
 	//load boxes
-	Box crate( textureBank["box"], 300, 0);
+	Box crate( _textureBank["box"], 300, 0);
 	crate.SetWorld( *_pWorld );
 	boxes.push_back( crate );
 
@@ -131,6 +132,10 @@ void Game::LoadContent()
 	Edward.LoadContent();
 	Edward.SetWorld(*_pWorld);
 	
+	//load enemy
+	enemy.LoadContent();
+	enemy.SetWorld(*_pWorld);
+
 }
 
 void Game::UnloadContent() 
@@ -138,39 +143,38 @@ void Game::UnloadContent()
 	delete _pWorld;
 }
 
-void Game::Update(Event gameEvent, Event previousGameEvent, Time timeSinceLastUpdateCall ) 
+void Game::Update(Event gameEvent, Event previousGameEvent, Time timeSinceLastUpdateCall)
 {
-
-	_pWorld->Step( timeStep, 8, 8);
+	_pWorld->Step(timeStep, 8, 8);
 
 	Time frameTime = frameClock.restart();
 
-	for ( int i = 0; i < balls.size(); ++i)
-		balls[i].Update(gameEvent, timeSinceLastUpdateCall );
+	for (int i = 0; i < balls.size(); ++i)
+		balls[i].Update(gameEvent, timeSinceLastUpdateCall);
 
-	for ( int i = 0; i < boxes.size(); ++i)
-		boxes[i].Update(gameEvent, timeSinceLastUpdateCall );
+	for (int i = 0; i < boxes.size(); ++i)
+		boxes[i].Update(gameEvent, timeSinceLastUpdateCall);
 
-	for ( int i = 0; i < platforms.size(); ++i)
-		platforms[i].Update(gameEvent, timeSinceLastUpdateCall );
+	for (int i = 0; i < platforms.size(); ++i)
+		platforms[i].Update(gameEvent, timeSinceLastUpdateCall);
 
-	for ( int i = 0; i < bombs.size(); ++i)
-		bombs[i].Update( gameEvent, timeSinceLastUpdateCall );
-	
+	for (int i = 0; i < bombs.size(); ++i)
+		bombs[i].Update(gameEvent, timeSinceLastUpdateCall);
+
 	Edward.Update(gameEvent, previousGameEvent, timeSinceLastUpdateCall, frameTime);
+
+	enemy.Update(gameEvent, Edward, timeSinceLastUpdateCall, frameTime);
 }
 
 void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall ) 
 {
-	_rWindow.clear( Color(255,255,255) );
+	_rWindow.clear( Color(0,0,0) );
 
 	for ( int i = 0; i < balls.size(); ++i)
 		balls[i].Draw(_rWindow, timeSinceLastDrawCall );
 
-
 	for ( int i = 0; i < boxes.size(); ++i)
 		boxes[i].Draw( _rWindow, timeSinceLastDrawCall );
-
 
 	for ( int i = 0; i < platforms.size(); ++i)
 		platforms[i].Draw( _rWindow, timeSinceLastDrawCall );
@@ -179,6 +183,8 @@ void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall )
 		bombs[i].Draw( _rWindow, timeSinceLastDrawCall );
 	
 	Edward.Draw(_rWindow, timeSinceLastDrawCall);
+	
+	enemy.Draw(_rWindow, timeSinceLastDrawCall);
 		
 	_pWorld->DrawDebugData();
 
@@ -195,7 +201,7 @@ void Game::HandleInput(Event gameEvent)
 		{
 			Vector2i mousePos = Mouse::getPosition( _rWindow );
 
-			Box crate( textureBank["box"], mousePos.x, mousePos.y);
+			Box crate( _textureBank["box"], mousePos.x, mousePos.y);
 			crate.SetWorld( *_pWorld );
 			boxes.push_back( crate );
 
@@ -205,7 +211,7 @@ void Game::HandleInput(Event gameEvent)
 		{
 			Vector2i mousePos = Mouse::getPosition( _rWindow );
 
-			Ball ball( textureBank["ball"], mousePos.x, mousePos.y);
+			Ball ball( _textureBank["ball"], mousePos.x, mousePos.y);
 			ball.SetWorld( *_pWorld );
 			balls.push_back( ball );
 
@@ -221,7 +227,7 @@ void Game::HandleInput(Event gameEvent)
 		{
 		
 			for ( int i = 0; i < bombs.size(); ++i)
-				bombs[i].Explode( textureBank["bombParticle"], *_pWorld );
+				bombs[i].Explode( _textureBank["bombParticle"], *_pWorld );
 		
 		}
 
