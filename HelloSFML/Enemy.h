@@ -7,6 +7,7 @@ class Enemy : public GameCharacter
 protected:
 	bool _inAir;
 	bool _alive;
+	bool _hit;
 	Health _health;
 	int _damage;
 

@@ -9,8 +9,16 @@ using namespace sf;
 
 void Enemy::Damage(int amount)
 {
-	_health -= amount;
-	// TODO: Change state to Hurt
+	if (_state != Hurt)
+	{
+		_health -= amount;
+
+		if (_health == 0)
+		{
+			_alive = false;
+		}
+		else _hit = true;
+	}
 }
 
 void Enemy::Draw(RenderWindow& window, Time dt)

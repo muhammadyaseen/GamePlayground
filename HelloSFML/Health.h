@@ -16,5 +16,6 @@ public:
 	friend Health operator-(int, Health);
 	Health operator+=(int);
 	Health operator-=(int);
+	bool operator==(int);
 };
 

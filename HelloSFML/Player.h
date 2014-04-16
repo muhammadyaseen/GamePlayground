@@ -5,6 +5,7 @@ class Player : public GameCharacter
 {
 private:
 	bool _inAir;
+	bool _hit;
 	Health _health;
 
 	enum State {

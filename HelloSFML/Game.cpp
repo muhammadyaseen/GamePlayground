@@ -222,7 +222,9 @@ void Game::HandleInput(Event gameEvent)
 
 		if ( gameEvent.key.code == Keyboard::Q ) //decrease ball radius
 		{
-			_pWorld->DestroyBody(enemy.GetPhysicsBody());
+			//_pWorld->DestroyBody(enemy.GetPhysicsBody());
+			Edward.Damage(1);
+			enemy.Damage(1);
 		}
 
 		if ( gameEvent.key.code == Keyboard::E ) //explode

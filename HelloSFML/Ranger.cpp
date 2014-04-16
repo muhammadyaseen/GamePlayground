@@ -42,6 +42,18 @@ void Ranger::changeSprite(State _state)
 		_currentAnimation = &_animationBank[Landing];
 		break;
 
+	case Attacking:
+		_animatedSprite.setLooped(false);
+		_animatedSprite.setFrameTime(sf::seconds(0.2f));
+		_currentAnimation = &_animationBank[Attacking];
+		break;
+	
+	case Hurt:
+		_animatedSprite.setLooped(false);
+		_animatedSprite.setFrameTime(sf::seconds(0.12f));
+		_currentAnimation = &_animationBank[Hurt];
+		break;
+
 	default:
 		break;
 	}
@@ -78,17 +90,17 @@ void Ranger::LoadContent()
 	_animationBank[Walking].addFrame(IntRect(169, 0, 194 - 169, 67));
 	_animationBank[Walking].addFrame(IntRect(205, 0, 231 - 205, 67));
 
-	// TODO: Running Animation
+	// Running Animation
 	texture.loadFromFile("Art\\Ranger\\Run.png");
 	_textureBank.insert(pair<State, Texture>(Running, texture));
 
 	_animationBank[Running].setSpriteSheet(_textureBank[Running]);
-	_animationBank[Running].addFrame(IntRect(0, 0, 42 - 0, 51));
-	_animationBank[Running].addFrame(IntRect(47, 0, 96 - 47, 51));
-	_animationBank[Running].addFrame(IntRect(106, 0, 160 - 106, 51));
-	_animationBank[Running].addFrame(IntRect(174, 0, 214 - 174, 51));
-	_animationBank[Running].addFrame(IntRect(221, 0, 277 - 221, 51));
-	_animationBank[Running].addFrame(IntRect(285, 0, 337 - 285, 51));
+	_animationBank[Running].addFrame(IntRect(0,   -5, 52 - 0, 67));
+	_animationBank[Running].addFrame(IntRect(66,  -5, 118 - 66, 67));
+	_animationBank[Running].addFrame(IntRect(134, -5, 179 - 134, 67));
+	_animationBank[Running].addFrame(IntRect(195, -5, 250 - 195, 67));
+	_animationBank[Running].addFrame(IntRect(262, -5, 316 - 262, 67));
+	_animationBank[Running].addFrame(IntRect(330, -5, 368 - 330, 67));
 
 	// TODO: Jumping Animation
 	texture.loadFromFile("Art\\Ranger\\Jump.png");
@@ -110,6 +122,31 @@ void Ranger::LoadContent()
 	_animationBank[Landing].addFrame(IntRect(222, 9, 264 - 222, 65 - 9));
 	_animationBank[Landing].addFrame(IntRect(274, 15, 316 - 274, 65 - 15));
 	_animationBank[Landing].addFrame(IntRect(330, 15, 380 - 330, 65 - 15));
+
+	// Attacking Animation
+	texture.loadFromFile("Art\\Ranger\\Attack.png");
+	_textureBank.insert(pair<State, Texture>(Attacking, texture));
+
+	_animationBank[Attacking].setSpriteSheet(_textureBank[Attacking]);
+	_animationBank[Attacking].addFrame(IntRect(0,   0, 27 - 0,    70));
+	_animationBank[Attacking].addFrame(IntRect(48,  0, 94 - 48,   70));
+	_animationBank[Attacking].addFrame(IntRect(104, 0, 131 - 104, 70));
+	_animationBank[Attacking].addFrame(IntRect(153, 0, 178 - 153, 70));
+	_animationBank[Attacking].addFrame(IntRect(193, 0, 242 - 193, 70));
+	_animationBank[Attacking].addFrame(IntRect(265, 0, 312 - 265, 70));
+	_animationBank[Attacking].addFrame(IntRect(329, 0, 376 - 329, 70));
+	_animationBank[Attacking].addFrame(IntRect(390, 0, 437 - 390, 70));
+	_animationBank[Attacking].addFrame(IntRect(443, 0, 479 - 443, 70));
+
+	// Hurt Animation
+	texture.loadFromFile("Art\\Ranger\\Hurt.png");
+	_textureBank.insert(pair<State, Texture>(Hurt, texture));
+
+	_animationBank[Hurt].setSpriteSheet(_textureBank[Hurt]);
+	_animationBank[Hurt].addFrame(IntRect(  0, -5,  47 -   0, 67));
+	_animationBank[Hurt].addFrame(IntRect( 67, -5, 118 -  67, 67));
+	_animationBank[Hurt].addFrame(IntRect(140, -5, 191 - 140, 67));
+	_animationBank[Hurt].addFrame(IntRect(598, -5, 640 - 598, 67));
 
 	// Setting up the animated sprite
 	_animatedSprite.setLooped(true);
@@ -152,51 +189,65 @@ void Ranger::handleState()
 	// Remember what the player's _state was in the previous update
 	_previousState = _state;
 
-	// Change the current _state according to vertical events
-	if (_pBody->GetLinearVelocity().y > 0.1)
+	if (_hit)
 	{
-		_state = Falling;
+		_state = Hurt;
+		_hit = false;
 	}
-	else if (_pBody->GetLinearVelocity().y == 0)
+
+	// If the Hurt animation is done, then make the character Idle again
+	if (_state == Hurt && !_animatedSprite.isPlaying())
 	{
 		_state = Idle;
 	}
-	else if (_pBody->GetLinearVelocity().y < -0.1)
+
+	// Only allow normal movement if character is not recoiling from damage
+	// or dying
+	if (_state != Hurt && _state != Dead)
 	{
-		_state = Rising;
+		// Change the current _state according to vertical events
+		if (_pBody->GetLinearVelocity().y > 0.1)
+		{
+			_state = Falling;
+		}
+		else if (_pBody->GetLinearVelocity().y == 0)
+		{
+			_state = Idle;
+		}
+		else if (_pBody->GetLinearVelocity().y < -0.1)
+		{
+			_state = Rising;
+		}
+
+		// Judge whether the character is in air or not
+		if (_state != Rising && _state != Falling) _inAir = false;
+		else _inAir = true;
+
+		// Change the current _state according to horizontal events
+		if (!_inAir)
+		{
+			if (_pBody->GetLinearVelocity().x < -1.5)
+			{
+				_state = Running;
+			}
+			else if (_pBody->GetLinearVelocity().x < 0)
+			{
+				_state = Walking;
+			}
+			else if (_pBody->GetLinearVelocity().x > 0)
+			{
+				_state = Walking;
+			}
+			if (_pBody->GetLinearVelocity().x > 1.5)
+			{
+				_state = Running;
+			}
+
+			if (_pBody->GetLinearVelocity().x < -0.1) _movingForward = false;
+			else if (_pBody->GetLinearVelocity().x > 0.1) _movingForward = true;
+		}
 	}
-
-	// Judge whether the player is in air or not
-	if (_state != Rising && _state != Falling) _inAir = false;
-	else _inAir = true;
-
-	// Change the current _state according to horizontal events
-	if (!_inAir)
-	{
-		if (_pBody->GetLinearVelocity().x < -1.5)
-		{
-			_state = Running;
-		}
-		else if (_pBody->GetLinearVelocity().x < 0)
-		{
-			_state = Walking;
-		}
-		else if (_pBody->GetLinearVelocity().x > 0)
-		{
-			_state = Walking;
-		}
-		if (_pBody->GetLinearVelocity().x > 1.5)
-		{
-			_state = Running;
-		}
-
-		if (_pBody->GetLinearVelocity().x < -0.1) _movingForward = false;
-		else if (_pBody->GetLinearVelocity().x > 0.1) _movingForward = true;
-	}
-
 	// If movement is in neither of the dimensions and the player is just standing
-
-	// TODO: Hurt animation
 }
 
 void Ranger::handleEvent(Event gameEvent, Player& player)
@@ -233,8 +284,7 @@ void Ranger::handleEvent(Event gameEvent, Player& player)
 
 void Ranger::Update(Event gameEvent, Player& player, Time dt, Time frameTime)
 {
-	//_animatedSprite.setAnimation(*_currentAnimation);
-	handleEvent(gameEvent, player);
+	if (_state != Hurt) handleEvent(gameEvent, player);
 	handleState();
 
 	if (_state != _previousState)

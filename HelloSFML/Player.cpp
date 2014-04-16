@@ -102,6 +102,12 @@ void Player::changeSprite(State _state)
 		_animatedSprite.setFrameTime(sf::seconds(0.2f));
 		_currentAnimation = &_animationBank[Landing];
 		break;
+	
+	case Hurt:
+		_animatedSprite.setLooped(false);
+		_animatedSprite.setFrameTime(sf::seconds(0.15f));
+		_currentAnimation = &_animationBank[Hurt];
+		break;
 
 	default:
 		break;
@@ -116,48 +122,65 @@ void Player::handleState()
 	// Remember what the player's _state was in the previous update
 	_previousState = _state;
 
-	// Change the current _state according to vertical events
-	if (_pBody->GetLinearVelocity().y > 0.1)
+	// Problem: _previousState is not set properly when Damage method is called
+	if (_hit) 
 	{
-		_state = Falling;
+		_state = Hurt;
+		_hit = false;
 	}
-	else if (_pBody->GetLinearVelocity().y == 0)
+
+	// If the Hurt animation is done, then make the character Idle again
+	if (_state == Hurt && !_animatedSprite.isPlaying())
 	{
 		_state = Idle;
 	}
-	else if (_pBody->GetLinearVelocity().y < -0.1)
+
+	// Only allow normal movement if character is not recoiling from damage
+	// or dying
+	if (_state != Hurt && _state != Dead)
 	{
-		_state = Rising;
+		// Change the current _state according to vertical events
+		if (_pBody->GetLinearVelocity().y > 0.1)
+		{
+			_state = Falling;
+		}
+		else if (_pBody->GetLinearVelocity().y == 0)
+		{
+			_state = Idle;
+		}
+		else if (_pBody->GetLinearVelocity().y < -0.1)
+		{
+			_state = Rising;
+		}
+
+		// Judge whether the player is in air or not
+		if (_state != Rising && _state != Falling) _inAir = false;
+		else _inAir = true;
+
+		// Change the current _state according to horizontal events
+		if (!_inAir)
+		{
+			if (_pBody->GetLinearVelocity().x < -1.5)
+			{
+				_state = Running;
+			}
+			else if (_pBody->GetLinearVelocity().x < 0)
+			{
+				_state = Walking;
+			}
+			else if (_pBody->GetLinearVelocity().x > 0)
+			{
+				_state = Walking;
+			}
+			if (_pBody->GetLinearVelocity().x > 1.5)
+			{
+				_state = Running;
+			}
+
+			if (_pBody->GetLinearVelocity().x < -0.1) _movingForward = false;
+			else if (_pBody->GetLinearVelocity().x > 0.1) _movingForward = true;
+		}
 	}
-
-	// Judge whether the player is in air or not
-	if (_state != Rising && _state != Falling) _inAir = false;
-	else _inAir = true;
-
-	// Change the current _state according to horizontal events
-	if (!_inAir)
-	{
-		if (_pBody->GetLinearVelocity().x < -1.5)
-		{
-			_state = Running;
-		}
-		else if (_pBody->GetLinearVelocity().x < 0)
-		{
-			_state = Walking;
-		}
-		else if (_pBody->GetLinearVelocity().x > 0)
-		{
-			_state = Walking;
-		}
-		if (_pBody->GetLinearVelocity().x > 1.5)
-		{
-			_state = Running;
-		}
-
-		if (_pBody->GetLinearVelocity().x < -0.1) _movingForward = false;
-		else if (_pBody->GetLinearVelocity().x > 0.1) _movingForward = true;
-	}
-
 	// If movement is in neither of the dimensions and the player is just standing
 
 	// TODO: Hurt animation
@@ -340,7 +363,8 @@ void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 void Player::LoadContent()
 {
 	_health = Health(50);
-	
+	_hit = false;
+
 	Texture texture;
 	
 	// Idle Animation
@@ -396,6 +420,15 @@ void Player::LoadContent()
 	_animationBank[Landing].addFrame(IntRect( 274, 15, 316 - 274, 65 - 15));
 	_animationBank[Landing].addFrame(IntRect( 330, 15, 380 - 330, 65 - 15));
 
+	// Hurt Animation
+	texture.loadFromFile("Art\\Edward Elric\\Hurt.png");
+	_textureBank.insert(pair<State, Texture>(Hurt, texture));
+
+	_animationBank[Hurt].setSpriteSheet(_textureBank[Hurt]);
+	_animationBank[Hurt].addFrame(IntRect( 44, -3, 85 - 44,  54));
+	_animationBank[Hurt].addFrame(IntRect( 91, -3, 124 - 91, 54));
+	_animationBank[Hurt].addFrame(IntRect( 0,  -3, 40 - 0,   54));
+
 	// Setting up the animated sprite
 	_animatedSprite.setLooped(true);
 	_animatedSprite.play();
@@ -405,14 +438,12 @@ void Player::LoadContent()
 
 	_animatedSprite.setAnimation(*_currentAnimation);
 
-	// Load hurt state
-
 	create(_textureBank[Idle], 200, 500);
 }
 
 void Player::Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time frameTime)
 {
-	handleEvent(gameEvent, oldGameEvent);
+	if (_state != Hurt) handleEvent(gameEvent, oldGameEvent);
 	handleState();
 
 	if (_state != _previousState)
@@ -440,8 +471,16 @@ void Player::Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time f
 
 void Player::Damage(int amount)
 {
-	_health -= amount;
-	// TODO: Change state to Hurt
+	if (_state != Hurt)
+	{
+		_health -= amount;
+		
+		if (_health == 0)
+		{
+			_alive = false;
+		}
+		else _hit = true;
+	}
 }
 
 Player::State Player::GetState() { return _state; }
