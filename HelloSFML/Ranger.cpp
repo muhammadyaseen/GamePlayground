@@ -42,10 +42,10 @@ void Ranger::changeSprite(State _state)
 		_currentAnimation = &_animationBank[Landing];
 		break;
 
-	case Attacking:
+	case Attack:
 		_animatedSprite.setLooped(false);
-		_animatedSprite.setFrameTime(sf::seconds(0.2f));
-		_currentAnimation = &_animationBank[Attacking];
+		_animatedSprite.setFrameTime(sf::seconds(0.15f));
+		_currentAnimation = &_animationBank[Attack];
 		break;
 	
 	case Hurt:
@@ -123,20 +123,20 @@ void Ranger::LoadContent()
 	_animationBank[Landing].addFrame(IntRect(274, 15, 316 - 274, 65 - 15));
 	_animationBank[Landing].addFrame(IntRect(330, 15, 380 - 330, 65 - 15));
 
-	// Attacking Animation
+	// Attack Animation
 	texture.loadFromFile("Art\\Ranger\\Attack.png");
-	_textureBank.insert(pair<State, Texture>(Attacking, texture));
+	_textureBank.insert(pair<State, Texture>(Attack, texture));
 
-	_animationBank[Attacking].setSpriteSheet(_textureBank[Attacking]);
-	_animationBank[Attacking].addFrame(IntRect(0,   0, 27 - 0,    70));
-	_animationBank[Attacking].addFrame(IntRect(48,  0, 94 - 48,   70));
-	_animationBank[Attacking].addFrame(IntRect(104, 0, 131 - 104, 70));
-	_animationBank[Attacking].addFrame(IntRect(153, 0, 178 - 153, 70));
-	_animationBank[Attacking].addFrame(IntRect(193, 0, 242 - 193, 70));
-	_animationBank[Attacking].addFrame(IntRect(265, 0, 312 - 265, 70));
-	_animationBank[Attacking].addFrame(IntRect(329, 0, 376 - 329, 70));
-	_animationBank[Attacking].addFrame(IntRect(390, 0, 437 - 390, 70));
-	_animationBank[Attacking].addFrame(IntRect(443, 0, 479 - 443, 70));
+	_animationBank[Attack].setSpriteSheet(_textureBank[Attack]);
+	_animationBank[Attack].addFrame(IntRect(0,   0, 27 - 0,    70));
+	_animationBank[Attack].addFrame(IntRect(48,  0, 94 - 48,   70));
+	_animationBank[Attack].addFrame(IntRect(104, 0, 131 - 104, 70));
+	_animationBank[Attack].addFrame(IntRect(153, 0, 178 - 153, 70));
+	_animationBank[Attack].addFrame(IntRect(193, 0, 242 - 193, 70));
+	_animationBank[Attack].addFrame(IntRect(265, 0, 312 - 265, 70));
+	_animationBank[Attack].addFrame(IntRect(329, 0, 376 - 329, 70));
+	_animationBank[Attack].addFrame(IntRect(390, 0, 437 - 390, 70));
+	_animationBank[Attack].addFrame(IntRect(443, 0, 479 - 443, 70));
 
 	// Hurt Animation
 	texture.loadFromFile("Art\\Ranger\\Hurt.png");
@@ -201,9 +201,20 @@ void Ranger::handleState()
 		_state = Idle;
 	}
 
+	// Attacking logic
+	if (_attackCalled)
+	{
+		_state = Attack;
+		_attackCalled = false;
+	}
+	else if (_state == Attack && !_animatedSprite.isPlaying())
+	{
+		_state = Idle;
+	}
+
 	// Only allow normal movement if character is not recoiling from damage
-	// or dying
-	if (_state != Hurt && _state != Dead)
+	// or dying or attacking
+	if (_state != Hurt && _state != Dead && _state != Attack)
 	{
 		// Change the current _state according to vertical events
 		if (_pBody->GetLinearVelocity().y > 0.1)
@@ -257,7 +268,7 @@ void Ranger::handleEvent(Event gameEvent, Player& player)
 
 	float distanceFromPlayer = distanceFromBody(player.GetPhysicsBody());
 	
-	if (distanceFromPlayer < 3)
+	if (distanceFromPlayer < 3.6)
 	{
 		playerFound = true;
 	}
@@ -272,12 +283,22 @@ void Ranger::handleEvent(Event gameEvent, Player& player)
 			playerOnRight = 1;
 		else playerOnRight = -1;
 	
-		if (distanceFromPlayer > 1.2)
+		if (distanceFromPlayer > 2.4)
 		{
 			_pBody->SetLinearVelocity( b2Vec2( 
 				1.2 * playerOnRight, 
 				_pBody->GetLinearVelocity().y
 				) );
+		}
+		// Judge whether to attack or not with a chance of 1/98
+		else if (distanceFromPlayer > 2)
+		{
+			int choice = rand() % 98;
+
+			if (choice == 0)
+			{
+				_attackCalled = true;
+			}
 		}
 	}
 }

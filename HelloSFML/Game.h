@@ -15,6 +15,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Ranger.h"
+#include "Projectile.h"
 
 using namespace std;
 using namespace sf;
@@ -40,7 +41,7 @@ public:
 
 	const float timeStep;
 
-	b2World		*_pWorld;
+	b2World	*_pWorld;
 
 	RenderWindow& _rWindow;
 	SFMLDebugDraw& _rSfmlDebugDraw;
@@ -49,13 +50,13 @@ public:
 	Event oldEvent;
 
 	map<std::string, sf::Texture> _textureBank;
-	//map<std::string, CharSprite> edwardSprites;
 	map<std::string, Texture> edwardSprites;
 
 	vector<Ball> balls;
 	vector<Box> boxes;
 	vector<StaticPlatform> platforms;
 	vector<Bomb> bombs;
+	vector<Projectile> projectiles;
 	
 	Player Edward;
 	Clock frameClock;

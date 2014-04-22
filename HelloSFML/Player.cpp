@@ -2,7 +2,6 @@
 #include <iostream>
 #include <map>
 #include <string>
-//#include "Ball.h"
 
 using namespace std;
 using namespace sf;
@@ -11,8 +10,6 @@ Player::Player() {}
 
 Player::Player(Texture& texture, float initX, float initY)
 {
-	//_sprite.setTexture(texture);
-
 	_bodyDef.position.Set(MathHelper::ToUnit(initX), MathHelper::ToUnit(initY));
 	_bodyDef.type = b2_dynamicBody;
 	_bodyDef.fixedRotation = true;
@@ -32,9 +29,6 @@ Player::Player(Texture& texture, float initX, float initY)
 
 void Player::create(Texture& texture, float initX, float initY)
 {
-	//_sprite.setTexture(texture);
-	//_sprite.setTextureRect(IntRect(0, 0, texture.getSize().x / 3, texture.getSize().y));
-
 	_bodyDef.position.Set(MathHelper::ToUnit(initX), MathHelper::ToUnit(initY));
 	_bodyDef.type = b2_dynamicBody;
 	_bodyDef.fixedRotation = true;
@@ -46,7 +40,7 @@ void Player::create(Texture& texture, float initX, float initY)
 
 	_animatedSprite.setOrigin(
 		texture.getSize().x / 7,
-		texture.getSize().y / 2
+		(texture.getSize().y / 2) - 4
 		);
 
 	cout << "(" << _bodyDef.position.x << "," << _bodyDef.position.y << ")" << endl;
@@ -71,42 +65,111 @@ void Player::changeSprite(State _state)
 		_animatedSprite.setLooped(true);
 		_animatedSprite.setFrameTime(sf::seconds(0.2f));
 		_currentAnimation = &_animationBank[Idle];
+		
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 3
+			);
+
 		break;
 
 	case Walking:
 		_animatedSprite.setLooped(true);
 		_animatedSprite.setFrameTime(sf::seconds(0.2f));
 		_currentAnimation = &_animationBank[Walking];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 4
+			);
 		break;
 
 	case Running:
 		_animatedSprite.setLooped(true);
 		_animatedSprite.setFrameTime(sf::seconds(0.2f));
 		_currentAnimation = &_animationBank[Running];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 4
+			);
 		break;
 
 	case Rising:
 		_animatedSprite.setLooped(false);
 		_animatedSprite.setFrameTime(sf::seconds(0.1f));
 		_currentAnimation = &_animationBank[Rising];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			_textureBank[Idle].getSize().y / 2
+			);
 		break;
 
 	case Falling:
 		_animatedSprite.setLooped(true);
 		_animatedSprite.setFrameTime(sf::seconds(0.2f));
 		_currentAnimation = &_animationBank[Falling];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			_textureBank[Idle].getSize().y / 2
+			);
 		break;
 
 	case Landing:
 		_animatedSprite.setLooped(false);
 		_animatedSprite.setFrameTime(sf::seconds(0.2f));
 		_currentAnimation = &_animationBank[Landing];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 4
+			);
 		break;
 	
 	case Hurt:
 		_animatedSprite.setLooped(false);
 		_animatedSprite.setFrameTime(sf::seconds(0.15f));
 		_currentAnimation = &_animationBank[Hurt];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 8
+			);
+		break;
+
+	case Attack1:
+		_animatedSprite.setLooped(false);
+		_animatedSprite.setFrameTime(sf::seconds(0.15f));
+		_currentAnimation = &_animationBank[Attack1];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 3
+			);
+		break;
+
+	case Attack2:
+		_animatedSprite.setLooped(false);
+		_animatedSprite.setFrameTime(sf::seconds(0.15f));
+		_currentAnimation = &_animationBank[Attack2];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 3
+			);
+		break;
+
+	case Attack3:
+		_animatedSprite.setLooped(false);
+		_animatedSprite.setFrameTime(sf::seconds(0.13f));
+		_currentAnimation = &_animationBank[Attack3];
+
+		_animatedSprite.setOrigin(
+			_textureBank[Idle].getSize().x / 7,
+			(_textureBank[Idle].getSize().y / 2) - 3
+			);
 		break;
 
 	default:
@@ -121,8 +184,7 @@ void Player::handleState()
 {
 	// Remember what the player's _state was in the previous update
 	_previousState = _state;
-
-	// Problem: _previousState is not set properly when Damage method is called
+	
 	if (_hit) 
 	{
 		_state = Hurt;
@@ -135,9 +197,42 @@ void Player::handleState()
 		_state = Idle;
 	}
 
+	// Attacking logic
+	if (_attack1Called)
+	{
+		_state = Attack1;
+		_attack1Called = false;
+	}
+	
+	if (_state == Attack1 && !_animatedSprite.isPlaying())
+	{
+		if (_attack2Called)
+		{
+			_state = Attack2;
+			_attack2Called = false;
+		}
+		else _state = Idle;
+	}
+	else if (_state == Attack2 && !_animatedSprite.isPlaying())
+	{
+		if (_attack3Called) 
+		{
+			_state = Attack3;
+			_attack3Called = false;
+		}
+		else _state = Idle;
+	}
+	else if (_state == Attack3 && !_animatedSprite.isPlaying())
+	{
+		_state = Idle;
+	}
+	
+	// Set the busy variable so if statements are easier to handle
+	bool _busy = _state == Hurt || _state == Dead || _state == Attack1 || _state == Attack2 || _state == Attack3 || _state == Special;
+
 	// Only allow normal movement if character is not recoiling from damage
-	// or dying
-	if (_state != Hurt && _state != Dead)
+	// or dying or attacking
+	if (!_busy)
 	{
 		// Change the current _state according to vertical events
 		if (_pBody->GetLinearVelocity().y > 0.1)
@@ -182,8 +277,6 @@ void Player::handleState()
 		}
 	}
 	// If movement is in neither of the dimensions and the player is just standing
-
-	// TODO: Hurt animation
 }
 
 void Player::handleEvent(Event gameEvent, Event oldGameEvent)
@@ -316,7 +409,7 @@ void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 				}
 			}
 			
-			// Walking
+			// Walking and attacking
 			else
 			{
 				if (Keyboard::isKeyPressed(Keyboard::Right))
@@ -326,6 +419,24 @@ void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 				else if (Keyboard::isKeyPressed(Keyboard::Left))
 				{
 					_pBody->SetLinearVelocity(b2Vec2(-1.5, _pBody->GetLinearVelocity().y));
+				}
+				
+				else if (Keyboard::isKeyPressed(Keyboard::A))
+				{
+					if (_state == Attack2 && _animatedSprite.getCurrentFrame() > 2)
+					{
+						_attack3Called = true;
+					}
+
+					else if (_state == Attack1 && _animatedSprite.getCurrentFrame() > 1)
+					{
+						_attack2Called = true;
+					}
+
+					else if (_state != Attack1 && _state != Attack2 && _state != Attack3)
+					{
+						_attack1Called = true;
+					}
 				}
 			}
 		} // End of walking and jumping
@@ -362,8 +473,11 @@ void Player::handleEvent(Event gameEvent, Event oldGameEvent)
 
 void Player::LoadContent()
 {
-	_health = Health(50);
+	_health = *(new Health(50));
 	_hit = false;
+	_attack1Called = false;
+	_attack2Called = false;
+	_attack3Called = false;
 
 	Texture texture;
 	
@@ -425,9 +539,68 @@ void Player::LoadContent()
 	_textureBank.insert(pair<State, Texture>(Hurt, texture));
 
 	_animationBank[Hurt].setSpriteSheet(_textureBank[Hurt]);
-	_animationBank[Hurt].addFrame(IntRect( 44, -3, 85 - 44,  54));
-	_animationBank[Hurt].addFrame(IntRect( 91, -3, 124 - 91, 54));
-	_animationBank[Hurt].addFrame(IntRect( 0,  -3, 40 - 0,   54));
+	_animationBank[Hurt].addFrame(IntRect( 44, 0, 85 - 44,  47));
+	_animationBank[Hurt].addFrame(IntRect( 91, 0, 124 - 91, 47));
+	_animationBank[Hurt].addFrame(IntRect( 0,  0, 40 - 0,   47));
+
+	// Attack1 Animation
+	texture.loadFromFile("Art\\Edward Elric\\Attack1.png");
+	_textureBank.insert(pair<State, Texture>(Attack1, texture));
+
+	_animationBank[Attack1].setSpriteSheet(_textureBank[Attack1]);
+	_animationBank[Attack1].addFrame(IntRect(0,  0,  31 -   0, 54));
+	_animationBank[Attack1].addFrame(IntRect(38, 0,  81 -  38, 54));
+	_animationBank[Attack1].addFrame(IntRect(89, 0, 131 -  89, 54));
+	_animationBank[Attack1].addFrame(IntRect(142,0, 180 - 142, 54));
+
+	// Attack2 Animation
+	texture.loadFromFile("Art\\Edward Elric\\Attack2.png");
+	_textureBank.insert(pair<State, Texture>(Attack2, texture));
+
+	_animationBank[Attack2].setSpriteSheet(_textureBank[Attack2]);
+	_animationBank[Attack2].addFrame(IntRect(  0, 0,  33 -   0, 53));
+	_animationBank[Attack2].addFrame(IntRect( 46, 0,  74 -  46, 53));
+	_animationBank[Attack2].addFrame(IntRect(147, 0, 203 - 147, 53));
+	_animationBank[Attack2].addFrame(IntRect(213, 0, 264 - 213, 53));
+	_animationBank[Attack2].addFrame(IntRect(272, 0, 301 - 272, 53));
+	_animationBank[Attack2].addFrame(IntRect(309, 0, 344 - 309, 53));
+	_animationBank[Attack2].addFrame(IntRect(354, 0, 384 - 354, 53));
+
+	// Attack3 Animation
+	texture.loadFromFile("Art\\Edward Elric\\Attack3.png");
+	_textureBank.insert(pair<State, Texture>(Attack3, texture));
+
+	_animationBank[Attack3].setSpriteSheet(_textureBank[Attack3]);
+	_animationBank[Attack3].addFrame(IntRect(  0, 0,  32 -   0, 54));
+	_animationBank[Attack3].addFrame(IntRect( 42, 0,  80 -  42, 54));
+	_animationBank[Attack3].addFrame(IntRect( 88, 0, 123 -  88, 54));
+	_animationBank[Attack3].addFrame(IntRect(128, 0, 197 - 128, 54));
+	_animationBank[Attack3].addFrame(IntRect(206, 0, 263 - 206, 54));
+	_animationBank[Attack3].addFrame(IntRect(273, 0, 327 - 273, 54));
+	_animationBank[Attack3].addFrame(IntRect(334, 0, 387 - 334, 54));
+	_animationBank[Attack3].addFrame(IntRect(397, 0, 433 - 397, 54));
+	_animationBank[Attack3].addFrame(IntRect(443, 0, 473 - 443, 54));
+	_animationBank[Attack3].addFrame(IntRect(483, 0, 516 - 483, 54));
+
+
+	//// Code for the armblade attack
+	//_animationBank[Attack3].setSpriteSheet(_textureBank[Attack3]);
+	//_animationBank[Attack3].addFrame(IntRect(  0, 0,  32 -   0, 57));
+	//_animationBank[Attack3].addFrame(IntRect( 40, 0,  78 -  40, 57));
+	//_animationBank[Attack3].addFrame(IntRect( 83, 0, 119 -  83, 57));
+	//_animationBank[Attack3].addFrame(IntRect(129, 0, 161 - 129, 57));
+	//_animationBank[Attack3].addFrame(IntRect(170, 0, 203 - 173, 57));
+	//_animationBank[Attack3].addFrame(IntRect(211, 0, 248 - 211, 57));
+	//_animationBank[Attack3].addFrame(IntRect(259, 0, 295 - 259, 57));
+	//_animationBank[Attack3].addFrame(IntRect(306, 0, 344 - 306, 57));
+	//_animationBank[Attack3].addFrame(IntRect(352, 0, 434 - 352, 57));
+	//_animationBank[Attack3].addFrame(IntRect(447, 0, 505 - 447, 57));
+	//_animationBank[Attack3].addFrame(IntRect(513, 0, 551 - 513, 57));
+	//_animationBank[Attack3].addFrame(IntRect(561, 0, 599 - 561, 57));
+	//_animationBank[Attack3].addFrame(IntRect(609, 0, 642 - 609, 57));
+	//_animationBank[Attack3].addFrame(IntRect(651, 0, 689 - 651, 57));
+	//_animationBank[Attack3].addFrame(IntRect(697, 0, 731 - 697, 57));
+
 
 	// Setting up the animated sprite
 	_animatedSprite.setLooped(true);
@@ -443,7 +616,7 @@ void Player::LoadContent()
 
 void Player::Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time frameTime)
 {
-	if (_state != Hurt) handleEvent(gameEvent, oldGameEvent);
+	if (_state != Hurt && _state != Dead) handleEvent(gameEvent, oldGameEvent);
 	handleState();
 
 	if (_state != _previousState)

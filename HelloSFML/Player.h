@@ -7,16 +7,23 @@ private:
 	bool _inAir;
 	bool _hit;
 	Health _health;
+	bool _attack1Called;
+	bool _attack2Called;
+	bool _attack3Called;
 
 	enum State {
-		Idle, 
-		Walking, 
+		Idle,
+		Walking,
 		Running,
-		Rising, 
+		Rising,
 		Falling,
 		Landing,
 		Hurt,
-		Dead
+		Dead,
+		Attack1,
+		Attack2,
+		Attack3,
+		Special
 	};
 
 	State _state;
@@ -25,19 +32,16 @@ private:
 	std::map<State, Animation> _animationBank;
 	std::map<State, Texture> _textureBank;
 	
-	//Animation *_currentAnimation;
-	//AnimatedSprite _animatedSprite;
-	
 	void handleEvent(Event currentEvent, Event oldEvent);
 	void handleState();
 	void changeSprite(State);
 	void create(Texture& texture, float initX, float initY);
+
 public:
 	Player();
 	Player(Texture& texture, float initX, float initY);
 
 	void SetWorld(b2World& world);
-	//void Create(Texture& texture, float initX, float initY);
 
 	void LoadContent();
 	void Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time frameTime);

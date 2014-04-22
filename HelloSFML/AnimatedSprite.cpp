@@ -115,6 +115,11 @@ sf::Time AnimatedSprite::getFrameTime() const
 	return m_frameTime;
 }
 
+std::size_t AnimatedSprite::getCurrentFrame() const
+{
+	return m_currentFrame;
+}
+
 void AnimatedSprite::setFrame(std::size_t newFrame, bool resetTime)
 {
 	if (m_animation)

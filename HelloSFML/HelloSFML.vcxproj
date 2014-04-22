@@ -88,6 +88,7 @@
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Ranger.cpp" />
     <ClCompile Include="Health.cpp" />
     <ClCompile Include="main.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="Box.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="GameCharacter.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="Ranger.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="MathHelper.h" />

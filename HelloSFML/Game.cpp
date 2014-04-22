@@ -48,13 +48,20 @@ void Game::Initialize()
 	_pWorld = new b2World( b2Vec2(0, 10.f) );
 	_pWorld->SetAllowSleeping( true );
 	_pWorld->SetDebugDraw( &_rSfmlDebugDraw );
+	
+	time_t t;
+	time(&t);
+	srand(t);
 }
 
 
 void Game::LoadContent() 
 {
 	//string contentPath = "H:\\Art Assets\\Demo\\";
-	
+	Texture knife;
+	knife.loadFromFile("Art\\Ranger\\Knife.png");
+	_textureBank.insert(pair<string, Texture>("knife", knife));
+
 	Texture ground;
 	ground.loadFromFile("Art\\Floor.png");
 	_textureBank.insert( pair<string, Texture>("floor", ground) );
@@ -161,6 +168,9 @@ void Game::Update(Event gameEvent, Event previousGameEvent, Time timeSinceLastUp
 	for (int i = 0; i < bombs.size(); ++i)
 		bombs[i].Update(gameEvent, timeSinceLastUpdateCall);
 
+	for (int i = 0; i < projectiles.size(); ++i)
+		projectiles[i].Update(gameEvent, timeSinceLastUpdateCall);
+
 	Edward.Update(gameEvent, previousGameEvent, timeSinceLastUpdateCall, frameTime);
 
 	enemy.Update(gameEvent, Edward, timeSinceLastUpdateCall, frameTime);
@@ -181,6 +191,9 @@ void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall )
 
 	for ( int i = 0; i < bombs.size(); ++i)
 		bombs[i].Draw( _rWindow, timeSinceLastDrawCall );
+
+	for (int i = 0; i < projectiles.size(); ++i)
+		projectiles[i].Draw(_rWindow, timeSinceLastDrawCall);
 	
 	Edward.Draw(_rWindow, timeSinceLastDrawCall);
 	
@@ -215,6 +228,15 @@ void Game::HandleInput(Event gameEvent)
 			ball.SetWorld( *_pWorld );
 			balls.push_back( ball );
 
+		}
+
+		if ( gameEvent.key.code == Keyboard::P )
+		{
+			Vector2i mousePos = Mouse::getPosition(_rWindow);
+
+			Projectile knife(_textureBank["knife"], mousePos.x, mousePos.y, -1);
+			knife.SetWorld(*_pWorld);
+			projectiles.push_back(knife);
 		}
 
 		if ( gameEvent.key.code == Keyboard::C ) //increase ball radius

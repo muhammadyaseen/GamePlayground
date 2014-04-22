@@ -8,6 +8,7 @@ protected:
 	bool _inAir;
 	bool _alive;
 	bool _hit;
+	bool _attackCalled;
 	Health _health;
 	int _damage;
 
@@ -20,7 +21,7 @@ protected:
 		Landing,
 		Hurt,
 		Dead,
-		Attacking
+		Attack
 	};
 
 	State _state;
