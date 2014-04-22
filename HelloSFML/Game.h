@@ -56,7 +56,7 @@ public:
 	vector<Box> boxes;
 	vector<StaticPlatform> platforms;
 	vector<Bomb> bombs;
-	vector<Projectile> projectiles;
+	vector<Projectile*> projectiles;
 	
 	Player Edward;
 	Clock frameClock;

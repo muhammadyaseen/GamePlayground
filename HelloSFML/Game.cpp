@@ -91,7 +91,7 @@ void Game::LoadContent()
 	bombParticle.loadFromFile("Art\\BombParticle.png");
 	_textureBank.insert( pair<string, Texture>("bombParticle", bombParticle) );
 
-	Bomb explosive( _textureBank["bomb"], 400, 550, 200 );
+	Bomb explosive( _textureBank["bomb"], -100, 0, 200 );
 	explosive.SetWorld( *_pWorld );
 	bombs.push_back( explosive );
 
@@ -170,16 +170,14 @@ void Game::Update(Event gameEvent, Event previousGameEvent, Time timeSinceLastUp
 
 	for (int i = 0; i < projectiles.size(); ++i)
 	{
-		if (projectiles[i].Update(gameEvent, timeSinceLastUpdateCall))
+		if (projectiles[i]->Update(gameEvent, timeSinceLastUpdateCall))
 		{
-			_pWorld->DestroyBody(projectiles[i].GetPhysicsBody());
+			delete projectiles[i];
 			projectiles.erase(projectiles.begin() + i);
 		}
 	}
 		
-
 	Edward.Update(gameEvent, previousGameEvent, timeSinceLastUpdateCall, frameTime);
-
 	enemy.Update(gameEvent, Edward, timeSinceLastUpdateCall, frameTime);
 }
 
@@ -200,7 +198,7 @@ void Game::Draw(RenderWindow& window, Time timeSinceLastDrawCall )
 		bombs[i].Draw( _rWindow, timeSinceLastDrawCall );
 
 	for (int i = 0; i < projectiles.size(); ++i)
-		projectiles[i].Draw(_rWindow, timeSinceLastDrawCall);
+		projectiles[i]->Draw(_rWindow, timeSinceLastDrawCall);
 	
 	Edward.Draw(_rWindow, timeSinceLastDrawCall);
 	
@@ -241,8 +239,8 @@ void Game::HandleInput(Event gameEvent)
 		{
 			Vector2i mousePos = Mouse::getPosition(_rWindow);
 
-			Projectile knife(_textureBank["knife"], mousePos.x, mousePos.y, -1);
-			knife.SetWorld(*_pWorld);
+			Projectile* knife = new Projectile(_textureBank["knife"], mousePos.x, mousePos.y, -1);
+			knife->SetWorld(*_pWorld);
 			projectiles.push_back(knife);
 		}
 
@@ -258,10 +256,8 @@ void Game::HandleInput(Event gameEvent)
 
 		if ( gameEvent.key.code == Keyboard::E ) //explode
 		{
-		
 			for ( int i = 0; i < bombs.size(); ++i)
 				bombs[i].Explode( _textureBank["bombParticle"], *_pWorld );
-		
 		}
 
 		if (gameEvent.key.code == Keyboard::Escape)

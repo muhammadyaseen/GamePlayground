@@ -25,5 +25,6 @@ public:
 	void Draw(sf::RenderWindow& window, sf::Time dt);
 	b2Body* GetPhysicsBody();
 	Projectile(sf::Texture texture, int initX, int initY, int direction);
+	Projectile();
 	~Projectile();
 };

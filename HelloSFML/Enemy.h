@@ -1,6 +1,7 @@
 #pragma once
 #include "GameCharacter.h"
 #include "Player.h"
+#include "Projectile.h"
 
 class Enemy : public GameCharacter
 {
@@ -38,6 +39,6 @@ protected:
 public:
 	Enemy();
 	void Damage(int);
-	void Draw(sf::RenderWindow& window, sf::Time dt);
+	virtual void Draw(sf::RenderWindow& window, sf::Time dt);
 };
 

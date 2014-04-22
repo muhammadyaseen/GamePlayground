@@ -65,7 +65,12 @@ void Ranger::changeSprite(State _state)
 void Ranger::LoadContent()
 {
 	_health = *(new Health(50));
+	_knifeExists = false;
+	_knifeThrown = false;
+	_attackCalled = false;
 
+	_knifeText.loadFromFile("Art\\Ranger\\Knife.png");
+	
 	Texture texture;
 
 	// Idle Animation
@@ -202,10 +207,15 @@ void Ranger::handleState()
 	}
 
 	// Attacking logic
-	if (_attackCalled)
+	if (_attackCalled && !_knifeExists)
 	{
 		_state = Attack;
 		_attackCalled = false;
+	}
+	else if (_state == Attack && _animatedSprite.getCurrentFrame() == 4 && !_knifeExists)
+	{
+		_knifeThrown = true;
+		_knifeExists = true;
 	}
 	else if (_state == Attack && !_animatedSprite.isPlaying())
 	{
@@ -290,10 +300,10 @@ void Ranger::handleEvent(Event gameEvent, Player& player)
 				_pBody->GetLinearVelocity().y
 				) );
 		}
-		// Judge whether to attack or not with a chance of 1/98
+		// Judge whether to attack or not with a chance of 1/60
 		else if (distanceFromPlayer > 2)
 		{
-			int choice = rand() % 98;
+			int choice = rand() % 60;
 
 			if (choice == 0)
 			{
@@ -327,11 +337,31 @@ void Ranger::Update(Event gameEvent, Player& player, Time dt, Time frameTime)
 		_animatedSprite.scale(-1.f, 1.f);
 	else if (!_movingForward && _animatedSprite.getScale().x > 0)
 		_animatedSprite.scale(-1.f, 1.f);
+
+	if (_knifeThrown)
+	{
+		_pKnife = new Projectile(_knifeText,
+			_animatedSprite.getPosition().x,
+			_animatedSprite.getPosition().y,
+			_animatedSprite.getScale().x);
+		
+		_pKnife->SetWorld( *(_pBody->GetWorld()) );
+		_knifeThrown = false;
+	}
+
+	if (_knifeExists && _pKnife->Update(gameEvent, dt))
+	{
+		//_pBody->GetWorld()->DestroyBody(_knife.GetPhysicsBody());
+		delete _pKnife;
+		_knifeExists = false;
+	}
 }
 
-Ranger::Ranger()
+void Ranger::Draw(RenderWindow& window, Time dt)
 {
-
+	window.draw(_animatedSprite);
+	if (_knifeExists) { _pKnife->Draw(window, dt); }
 }
 
+Ranger::Ranger() {}
 b2Body* Ranger::GetPhysicsBody() { return _pBody; }

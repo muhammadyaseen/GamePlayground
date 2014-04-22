@@ -21,8 +21,8 @@ Projectile::Projectile(sf::Texture texture, int initX, int initY, int direction)
 	_bodyDef.position.Set(MathHelper::ToUnit(initX), MathHelper::ToUnit(initY));
 	_bodyDef.type = b2_dynamicBody;
 	_bodyDef.fixedRotation = true;
-	//_bodyDef.linearDamping = 0;
-	//_bodyDef.gravityScale = 0;
+	_bodyDef.linearDamping = 0;
+	_bodyDef.gravityScale = 0;
 	
 	//_bodyShape.m_radius = MathHelper::ToUnit(texture.getSize().x / 2.f);
 
@@ -85,6 +85,7 @@ void Projectile::Draw(sf::RenderWindow& window, sf::Time dt)
 
 Projectile::~Projectile()
 {
+	_pBody->GetWorld()->DestroyBody(_pBody);
 }
 
 float Projectile::distanceTravelled()
@@ -96,4 +97,5 @@ float Projectile::distanceTravelled()
 	return diff_x;
 }
 
+Projectile::Projectile() {}
 b2Body* Projectile::GetPhysicsBody() { return _pBody; }
