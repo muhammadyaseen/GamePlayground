@@ -21,7 +21,7 @@ class Projectile
 
 public:
 	void SetWorld(b2World & world);
-	void Update(sf::Event e, sf::Time dt);
+	bool Update(sf::Event e, sf::Time dt);
 	void Draw(sf::RenderWindow& window, sf::Time dt);
 	b2Body* GetPhysicsBody();
 	Projectile(sf::Texture texture, int initX, int initY, int direction);

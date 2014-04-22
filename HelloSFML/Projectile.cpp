@@ -12,6 +12,7 @@ Projectile::Projectile(sf::Texture texture, int initX, int initY, int direction)
 {
 	_range = 3;
 	_direction = direction;
+	_initpos = b2Vec2(MathHelper::ToUnit(initX), MathHelper::ToUnit(initY));
 
 	_sprite.setTexture(texture);
 	_sprite.setOrigin(texture.getSize().x / 2, texture.getSize().y / 2);
@@ -23,7 +24,6 @@ Projectile::Projectile(sf::Texture texture, int initX, int initY, int direction)
 	//_bodyDef.linearDamping = 0;
 	//_bodyDef.gravityScale = 0;
 	
-
 	//_bodyShape.m_radius = MathHelper::ToUnit(texture.getSize().x / 2.f);
 
 	_bodyShape.SetAsBox(
@@ -58,7 +58,7 @@ Projectile::Projectile(sf::Texture texture, int initX, int initY, int direction)
 	
 }
 
-void Projectile::Update(sf::Event e, sf::Time dt)
+bool Projectile::Update(sf::Event e, sf::Time dt)
 {
 	//_sprite.setRotation( MathHelper::RadianToDegree( _pBody->GetAngle() ) );
 
@@ -69,10 +69,13 @@ void Projectile::Update(sf::Event e, sf::Time dt)
 		MathHelper::ToPixel(_pBody->GetPosition().y)
 		);
 
-	//if (distanceTravelled() > _range)
-	//{
-	//	world->DestroyBody(_pBody);
-	//}
+	float distance = distanceTravelled();
+
+	if (distance > _range)
+	{
+		return true;
+	}
+	else return false;
 }
 
 void Projectile::Draw(sf::RenderWindow& window, sf::Time dt)
@@ -86,10 +89,11 @@ Projectile::~Projectile()
 
 float Projectile::distanceTravelled()
 {
-	float diff_x = _pBody->GetPosition().x - _initpos.x;
-	float diff_y = _pBody->GetPosition().y - _initpos.y;
+	float diff_x = abs(_pBody->GetPosition().x - _initpos.x);
+	//float diff_y = abs(_pBody->GetPosition().y - _initpos.y);
 
-	return sqrt(diff_x*diff_x + diff_y*diff_y);
+	//return sqrt(diff_x*diff_x + diff_y*diff_y);
+	return diff_x;
 }
 
 b2Body* Projectile::GetPhysicsBody() { return _pBody; }

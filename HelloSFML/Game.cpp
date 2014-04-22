@@ -169,7 +169,14 @@ void Game::Update(Event gameEvent, Event previousGameEvent, Time timeSinceLastUp
 		bombs[i].Update(gameEvent, timeSinceLastUpdateCall);
 
 	for (int i = 0; i < projectiles.size(); ++i)
-		projectiles[i].Update(gameEvent, timeSinceLastUpdateCall);
+	{
+		if (projectiles[i].Update(gameEvent, timeSinceLastUpdateCall))
+		{
+			_pWorld->DestroyBody(projectiles[i].GetPhysicsBody());
+			projectiles.erase(projectiles.begin() + i);
+		}
+	}
+		
 
 	Edward.Update(gameEvent, previousGameEvent, timeSinceLastUpdateCall, frameTime);
 
