@@ -1,57 +1,60 @@
 #pragma once
-#include <Box2D/Box2D.h>
-#include <SFML/Graphics.hpp>
+#include "GameCharacter.h"
 
-#include "MathHelper.h"
-#include "Health.h"
-#include "Animation.hpp"
-#include "AnimatedSprite.hpp"
-
-class Player
+class Player : public GameCharacter
 {
 private:
-	bool _alive;
 	bool _inAir;
+	bool _hit;
+	Health _health;
+	bool _attack1Called;
+	bool _attack2Called;
+	bool _attack3Called;
 
 	enum State {
-		Idle, 
-		Walking,bWalking, 
-		Running,bRunning,
-		Rising, 
+		Idle,
+		Walking,
+		Running,
+		Rising,
 		Falling,
-		Landing
+		Landing,
+		Hurt,
+		Dead,
+		Attack1,
+		Attack2,
+		Attack3,
+		Special
 	};
 
 	State _state;
 	State _previousState;
 
-	b2Body* _pBody;
-	b2BodyDef _bodyDef;
-	b2PolygonShape _bodyShape;
-	b2FixtureDef _fixtureDef;
-
 	std::map<State, Animation> _animationBank;
-	Animation *_currentAnimation;
-	AnimatedSprite _animatedSprite;
-	
 	std::map<State, Texture> _textureBank;
 	
 	void handleEvent(Event currentEvent, Event oldEvent);
 	void handleState();
 	void changeSprite(State);
-	
+	void create(Texture& texture, float initX, float initY);
+
 public:
 	Player();
 	Player(Texture& texture, float initX, float initY);
 
 	void SetWorld(b2World& world);
-	void Create(Texture& texture, float initX, float initY);
 
-	void LoadContent();
+	void LoadContent(int x,int y);
 	void Update(sf::Event gameEvent, Event oldGameEvent, sf::Time dt, Time frameTime);
-	void Draw(sf::RenderWindow& window, sf::Time dt);
+
+	void Damage(int);
 
 	State GetState();
 	b2Body* GetPhysicsBody();
 	bool IsAlive();
+
+	Player* IamA( uint16 category ) { _fixtureDef.filter.categoryBits = category; return this; } 
+
+	void ICollideWith( uint16 collisionPartners ) {  _fixtureDef.filter.maskBits = collisionPartners; }
+
+	void Respawn(b2World *world,int x,int y);
 };

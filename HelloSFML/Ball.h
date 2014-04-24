@@ -5,7 +5,7 @@
 
 class Ball
 {
-private:
+protected:
 
    b2Body* _pBody;
    b2BodyDef _bodyDef;
@@ -25,11 +25,17 @@ public:
    void SetWorld(b2World& world);
    
    b2Body* GetPhysicsBody(); 
-      
+	  
    void Update(sf::Event e, sf::Time dt);
 
    void Draw( sf::RenderWindow& window, sf::Time dt );
 
    sf::Sprite& GetSprite();
+
+   
+	Ball* IamA( uint16 category ) { _fixtureDef.filter.categoryBits = category; return this; } 
+
+	void ICollideWith( uint16 collisionPartners ) {  _fixtureDef.filter.maskBits = collisionPartners; }
+
 
 };

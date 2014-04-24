@@ -14,24 +14,33 @@ private:
    
    sf::Sprite _sprite;
 
+
+
 public:
 
-   StaticPlatform(float width, float height);
-   
-   StaticPlatform(sf::Texture& texture, float initX, float initY, float scale_x=1,float scale_y=1, float rotation=0);
+   /*StaticPlatform(float width, float height);*/
+
+   StaticPlatform(sf::Texture& texture, float initX, float initY, float width, float rotation = 0);
+
+   StaticPlatform(sf::Texture& texture, float initX, float initY, float rotation = 0);
+
+   StaticPlatform(sf::Texture& texture, float initX, float initY, int repeatTimes,float restitution=0.3);
 
    StaticPlatform();
    
    void SetWorld(b2World& world);
    
    b2Body* GetPhysicsBody(); 
-      
+	  
    void Update(sf::Event e, sf::Time dt);
 
    void Draw( sf::RenderWindow& window, sf::Time dt );
 
    sf::Sprite& GetSprite();
+	
+   StaticPlatform* IamA( uint16 category ) { _fixtureDef.filter.categoryBits = category; return this; } 
 
+	void ICollideWith( uint16 collisionPartners ) {  _fixtureDef.filter.maskBits = collisionPartners; }
 
 };
 

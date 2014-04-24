@@ -2,13 +2,14 @@
 #include <Box2D/Box2D.h>
 #include <cstdio>
 #include "Game.h"
-  
+#include <stdlib.h>
 using namespace sf;
  
 int main()
 {
 	
-	RenderWindow gameWindow(VideoMode(800,640), "SFML + Box2D");
+	
+	RenderWindow gameWindow(VideoMode(900,700), "SFML + Box2D");//,sf::Style::Fullscreen);
 
 	SFMLDebugDraw debugDrawInstance(gameWindow);
 

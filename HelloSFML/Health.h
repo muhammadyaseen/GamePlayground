@@ -6,6 +6,7 @@ private:
 	int _maxHealth;
 
 public:
+	Health();
 	Health(int maxHealth);
 
 	// Operator overloads
@@ -15,5 +16,6 @@ public:
 	friend Health operator-(int, Health);
 	Health operator+=(int);
 	Health operator-=(int);
+	bool operator==(int);
 };
 

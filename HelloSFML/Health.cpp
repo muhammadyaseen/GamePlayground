@@ -1,6 +1,12 @@
 #include "Health.h"
 
-// Constructor
+// Constructors
+Health::Health()
+{
+	_maxHealth = 0;
+	_currentHealth = 0;
+}
+
 Health::Health(int maxHealth)
 {
 	_maxHealth = maxHealth;
@@ -17,7 +23,7 @@ Health Health::operator+(int x)
 	nh._currentHealth = _currentHealth + x;
 
 	if (nh._currentHealth > nh._maxHealth) nh._currentHealth = nh._maxHealth;
-	else if (nh._currentHealth < nh._maxHealth) nh._currentHealth = 0;
+	else if (nh._currentHealth < 0) nh._currentHealth = 0;
 
 	return nh;
 }
@@ -30,7 +36,7 @@ Health Health::operator-(int x)
 	nh._currentHealth = _currentHealth - x;
 
 	if (nh._currentHealth > nh._maxHealth) nh._currentHealth = nh._maxHealth;
-	else if (nh._currentHealth < nh._maxHealth) nh._currentHealth = 0;
+	else if (nh._currentHealth < 0) nh._currentHealth = 0;
 
 	return nh;
 }
@@ -43,7 +49,7 @@ Health operator+(int x, Health h)
 	nh._currentHealth = h._currentHealth + x;
 
 	if (nh._currentHealth > nh._maxHealth) nh._currentHealth = nh._maxHealth;
-	else if (nh._currentHealth < nh._maxHealth) nh._currentHealth = 0;
+	else if (nh._currentHealth < 0) nh._currentHealth = 0;
 	
 	return nh;
 }
@@ -56,7 +62,7 @@ Health operator-(int x, Health h)
 	nh._currentHealth = h._currentHealth - x;
 
 	if (nh._currentHealth > nh._maxHealth) nh._currentHealth = nh._maxHealth;
-	else if (nh._currentHealth < nh._maxHealth) nh._currentHealth = 0;
+	else if (nh._currentHealth < 0) nh._currentHealth = 0;
 
 	return nh;
 }
@@ -67,7 +73,7 @@ Health Health::operator+=(int x)
 	_currentHealth += x;
 
 	if (_currentHealth > _maxHealth) _currentHealth = _maxHealth;
-	else if (_currentHealth < _maxHealth) _currentHealth = 0;
+	else if (_currentHealth < 0) _currentHealth = 0;
 
 	return *this;
 }
@@ -78,7 +84,13 @@ Health Health::operator-=(int x)
 	_currentHealth -= x;
 
 	if (_currentHealth > _maxHealth) _currentHealth = _maxHealth;
-	else if (_currentHealth < _maxHealth) _currentHealth = 0;
+	else if (_currentHealth < 0) _currentHealth = 0;
 
 	return *this;
+}
+
+// For Health == x
+bool Health::operator==(int x)
+{
+	return (_currentHealth == x);
 }

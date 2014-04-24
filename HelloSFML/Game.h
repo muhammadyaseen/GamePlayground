@@ -10,11 +10,19 @@
 #include "Ball.h"
 #include "Box.h"
 #include "Bomb.h"
+#include "Wheel.h"
 #include "StaticPlatform.h"
+#include "JointPlatform.h"
 #include "SFMLDebugDraw.h"
+#include "SwingSpikeBall.h"
+#include "Coin.h"
 #include "Player.h"
-
-
+#include "Enemy.h"
+#include "Ranger.h"
+#include "State.h"
+#include "Level1.h"
+#include "Score.h"
+#include "CollisionListener.h"
 
 using namespace std;
 using namespace sf;
@@ -22,50 +30,48 @@ using namespace sf;
 class Game
 {
 
+	enum GameState
+	{
+		Splash,
+		Load_Screen,
+		Controls,
+		Credits,
+		Menu,
+		Level_1,
+		Level_2,
+		ScoreBoard,
+		Exit
+	};
+
+
 public:
+
+
 	Game(RenderWindow& w, SFMLDebugDraw& debugDraw);
 
 	//Game();
 
 	bool Run();
 
-	/*
-		For the sake of a basic 'functionality' demo, we have (or will) declare GameActors and other related
-		content as class level variables
-
-		Ideally this Game class should be inherited and game-specific actors be declared in that derived class
-
-	*/
-
-	//Start demo 'GameActor' Declarations
-
 	const float timeStep;
+
+	Event e;
+	Event oldEvent;
 
 	b2World		*_pWorld;
 
 	RenderWindow& _rWindow;
 	SFMLDebugDraw& _rSfmlDebugDraw;
+	CollisionListener gameEventListener;
 
-	Event e;
-	Event oldEvent;
-
-	map<std::string, sf::Texture> textureBank;
-	//map<std::string, CharSprite> edwardSprites;
-	map<std::string, Texture> edwardSprites;
-
-	vector<Ball> balls;
-	vector<Box> boxes;
-	vector<StaticPlatform> platforms;
-	vector<Bomb> bombs;
+	GameState stateName;
 	
-	Player Edward;
-	Clock frameClock;
+	State* _currentState;
 
+	View WindowView;
+
+	Score *score;
 	
-	View *curScr;
-
-	//End demo 'GameActor' Declarations
-
 protected:
 
 	void Initialize();
@@ -74,11 +80,21 @@ protected:
 	
 	void HandleInput(Event gameEvent);
 
+	void HandleState(State::LevelState lState);
+
 	void UnloadContent();
 	 
-	void Update(Event gameEvent, Event oldGameEvent, Time timeSinceLastUpdateCall);
+	void Update(Event gameEvent, Event prevEvent, Time timeSinceLastUpdateCall);
 	 
 	void Draw(RenderWindow& window, Time timeSinceLastDrawCall);
+
+
+	void SplashScreen();
+
+
+	void LoadScreen();
+
+	void ExitScreen();
 
 };
 
